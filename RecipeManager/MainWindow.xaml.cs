@@ -25,23 +25,36 @@ namespace HelloWPF
         public MainWindow()
         {
             InitializeComponent();
+            this.Title = "Opskrift håndtertinssystem";
             controlMainWindows = new MainWindows();
+        }
+
+        private void CategoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (CategoryListBox.SelectedItem != null)
+                LoadRecipes((CategoryListBox.SelectedItem as Category));
+
+        }
+
+        private void LoadRecipes(Category Category)
+        {
+            RecipeListBox.ItemsSource = controlMainWindows.GetRecipes(Category);
+        }
+
+        private void RecipeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (RecipeListBox.SelectedItem != null)
+            {
+                TextBlockTitle.Text = (RecipeListBox.SelectedItem as Recipe).Title;
+                TextBoxRecipe.Text = (RecipeListBox.SelectedItem as Recipe).Content;
+            }
         }
 
         private void FillOutButton_Click(object sender, RoutedEventArgs e)
         {
-            string[] strArr = controlMainWindows.getCategories();
-            foreach (string varStr in strArr)
-            {
-                TextBlock printTextBlock = new TextBlock();
-                printTextBlock.Text = varStr;
-                StackView.Children.Add(printTextBlock);
-            }
+            CategoryListBox.ItemsSource = controlMainWindows.GetCategories();
         }
 
-        private void categoryClickHandler(object sender, MouseButtonEventArgs e)
-        {
-
-        }
+        
     }
 }

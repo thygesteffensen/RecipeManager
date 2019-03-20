@@ -6,21 +6,47 @@
         xmlns:local="clr-namespace:HelloWPF"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12">Hello WPF!</TextBlock>
-        <ScrollViewer HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Stretch" Width="150">
-            <StackPanel x:Name="StackView" Height="Auto" VerticalAlignment="Stretch" Width="100"/>
-        </ScrollViewer>
-        <ListView Name="lvUsers" HorizontalAlignment="Left" Margin="165,10,0,0" VerticalAlignment="Stretch" Width="320">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="Name" Width="120" DisplayMemberBinding="{Binding Navn}" />
-                    <GridViewColumn Header="Category" Width="50" DisplayMemberBinding="{Binding Kategori}" />
-                    <GridViewColumn Header="CreationDate" Width="150" DisplayMemberBinding="{Binding Oprettelses dato}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <Button x:Name="FillOutButton" Content="Indlæs elementer" HorizontalAlignment="Left" Margin="491,276,0,0" VerticalAlignment="Top" Width="75" Click="FillOutButton_Click"/>
 
-    </Grid>
+
+    <DockPanel>
+        <!-- The _ (underscore) indicates the Alt+ shortcut! Very nice yes! -->
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_File">
+                <MenuItem Header="_Ny">
+                    <MenuItem Header="_Opskrift"/>
+                    <MenuItem Header="_Kategori"/>
+                    <MenuItem Header="_Råvare"/>
+                </MenuItem>
+                <MenuItem Header="_Luk"/>
+                <MenuItem Header="_Gem"/>
+                <Separator />
+                <MenuItem Header="_Indlæs data" Click="FillOutButton_Click"/>
+                    <Separator />
+                <MenuItem Header="_Exit"/>
+            </MenuItem>
+        </Menu>
+
+        <ListBox x:Name="CategoryListBox" DockPanel.Dock="Left" Width="150" Margin="10,10,0,10" SelectionChanged="CategoryListBox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <TextBlock Text="{Binding Title}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ListBox x:Name="RecipeListBox" DockPanel.Dock="Left" Margin="10,10,0,10"  Width="150" SelectionChanged="RecipeListBox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <TextBlock Text="{Binding Title}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <TextBlock x:Name="TextBlockTitle" DockPanel.Dock="Top" FontSize="24" Margin="10,10,0,0" Height="32"/>
+        <TextBox x:Name="TextBoxRecipe" Margin="10,10,10,10" VerticalAlignment="Stretch"/>
+
+    </DockPanel>
 </Window>
