@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using RecipeManager;
 using RecipeManager.Controllers;
+using RecipeManager.Views;
 
 namespace HelloWPF
 {
@@ -56,6 +57,11 @@ namespace HelloWPF
             CategoryListBox.ItemsSource = controlMainWindows.GetCategories();
         }
 
+        private void OpenCreateRecipe(object sender, RoutedEventArgs e)
+        {
+            CreateRecipe createRecipe = new CreateRecipe();
+            createRecipe.ShowDialog();
+        }
         
     }
 }
