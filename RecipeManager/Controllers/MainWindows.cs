@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using RecipeManager.Models;
+
 
 namespace RecipeManager.Controllers
 {
@@ -24,7 +26,7 @@ namespace RecipeManager.Controllers
 
             for (int j = 1; j < 25; j++, i++)
             {
-                list.Add(new Recipe() { Title = $"Katogri {i}", Id = i, Content = " Lorm Bacon Imspum Sadel med mere...."});
+                list.Add(new Recipe() { Title = $"Katogri {i}", Id = i, Description = " Lorm Bacon Imspum Sadel med mere...."});
             }
 
             return list;

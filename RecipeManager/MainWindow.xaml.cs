@@ -15,6 +15,8 @@ using System.Windows.Shapes;
 using RecipeManager;
 using RecipeManager.Controllers;
 using RecipeManager.Views;
+using RecipeManager.Models;
+using System.Data.SqlClient;
 
 namespace HelloWPF
 {
@@ -48,7 +50,7 @@ namespace HelloWPF
             if (RecipeListBox.SelectedItem != null)
             {
                 TextBlockTitle.Text = (RecipeListBox.SelectedItem as Recipe).Title;
-                TextBoxRecipe.Text = (RecipeListBox.SelectedItem as Recipe).Content;
+                TextBoxRecipe.Text = (RecipeListBox.SelectedItem as Recipe).Description;
             }
         }
 
@@ -62,6 +64,37 @@ namespace HelloWPF
             CreateRecipe createRecipe = new CreateRecipe();
             createRecipe.ShowDialog();
         }
-        
-    }
+
+		private void TestDB(object sender, RoutedEventArgs e)
+		{
+			//string path = Path.Combine(Application.StartupPath, "RecipeMangerDatabase.mdf");
+			string startupPath = Environment.CurrentDirectory;
+			string path = startupPath + "\\RecipeMangerDatabase.mdf";
+            path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf";
+            Console.Write(path);
+
+			//SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=" + path + ";");
+            SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"" + path + "\";Integrated Security=True");
+			conn.Open();
+
+			SqlCommand command = new SqlCommand("SELECT * FROM Recipe", conn);
+
+			SqlDataReader reader = command.ExecuteReader();
+            reader.Close();
+			Console.Write("Database result will be printed here:");
+			//while (reader.Read())
+			//{
+				//string text = reader.GetString(0) + "";
+				//Console.Write(text);
+			//}
+			
+			SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name) VALUES(4, \"Jack\")", conn);
+			//c.Parameters.AddWithValue("@i", 4);
+			//c.Parameters.AddWithValue("@v", "Jack");
+
+			c.ExecuteNonQuery();
+			
+			conn.Dispose();
+		}
+	}
 }
