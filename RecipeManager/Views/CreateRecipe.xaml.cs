@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using RecipeManager.Models;
 
 namespace RecipeManager.Views
 {
@@ -60,6 +61,11 @@ namespace RecipeManager.Views
             ListBoxComodties.Items.Refresh();
         }
 
+        private void SaveComodity_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private Comodity GetComodityFromComodity(object sender)
         {
             // Getting ID from button
@@ -83,19 +89,6 @@ namespace RecipeManager.Views
             Regex regex = new Regex(@"^[0-9]*(?:\.[0-9]*)?$");
             //Regex regex = new Regex("[0-9]*.?[0-9]*");
             e.Handled = !regex.IsMatch(e.Text);
-        }
-    }
-
-    public class Comodity
-    {
-        public string ComodityName { get; set; }
-        public int Id { get; set; }
-        public double Value { get; set; }
-        public string Unit { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Value} {Unit} {ComodityName} ({Id})";
         }
     }
 }

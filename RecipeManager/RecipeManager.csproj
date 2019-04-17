@@ -70,6 +70,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controllers\RecipeController.cs" />
+    <Compile Include="Models\RecipeModel.cs" />
     <Compile Include="Views\CreateRecipe.xaml.cs">
       <DependentUpon>CreateRecipe.xaml</DependentUpon>
     </Compile>

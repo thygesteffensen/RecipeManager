@@ -39,12 +39,4 @@ namespace RecipeManager.Controllers
         public string Title { get; set; }
         public int Id { get; set; }
     }
-
-    public class Recipe
-    {
-        public string Title { get; set; }
-        public int Id { get; set; }
-        public string Content { get; set; }
-
-    }
 }
