@@ -17,6 +17,7 @@ using RecipeManager.Controllers;
 using RecipeManager.Views;
 using RecipeManager.Models;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace HelloWPF
 {
@@ -25,12 +26,13 @@ namespace HelloWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindows controlMainWindows;
+        SqlConnection conn;
+        private MainWindowController controlMainWindows;
         public MainWindow()
         {
             InitializeComponent();
             this.Title = "Opskrift håndtertinssystem";
-            controlMainWindows = new MainWindows();
+            controlMainWindows = new MainWindowController();
         }
 
         private void CategoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -67,16 +69,6 @@ namespace HelloWPF
 
 		private void TestDB(object sender, RoutedEventArgs e)
 		{
-			//string path = Path.Combine(Application.StartupPath, "RecipeMangerDatabase.mdf");
-			string startupPath = Environment.CurrentDirectory;
-			string path = startupPath + "\\RecipeMangerDatabase.mdf";
-            path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf";
-            Console.Write(path);
-
-			//SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=" + path + ";");
-            SqlConnection conn = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"" + path + "\";Integrated Security=True");
-			conn.Open();
-
 			SqlCommand command = new SqlCommand("SELECT * FROM Recipe", conn);
 
 			SqlDataReader reader = command.ExecuteReader();
@@ -88,11 +80,14 @@ namespace HelloWPF
 				//Console.Write(text);
 			//}
 			
-			SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name) VALUES(4, \"Jack\")", conn);
-			//c.Parameters.AddWithValue("@i", 4);
-			//c.Parameters.AddWithValue("@v", "Jack");
+			SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name) VALUES(@ID, @NAME)", conn);
+            c.CommandTimeout = 15;
+            //c.CommandType = CommandType.Text;
+			c.Parameters.AddWithValue("@ID", 4);
+			c.Parameters.AddWithValue("@NAME", "Jack The Ripper");
 
 			c.ExecuteNonQuery();
+            
 			
 			conn.Dispose();
 		}

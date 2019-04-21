@@ -93,7 +93,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\MainWindows.cs" />
+    <Compile Include="Controllers\MainWindowController.cs" />
     <Compile Include="Models\MainWindowModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
