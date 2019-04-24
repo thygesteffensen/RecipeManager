@@ -11,66 +11,65 @@ namespace RecipeManager.Models
 {
 	class RecipeModel
 	{
-		private List<Recipe> _listRecipes = new List<Recipe>();
+        SqlConnection sqlConnection;
+		public RecipeModel(SqlConnection sqlConnection)
+        {
+            this.sqlConnection = sqlConnection;
+        }
 
-		public List<Recipe> GetRecipes()
-		{
-			return _listRecipes;
-		}
+        public Recipe GetRecipe(int ID)
+        {
+            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Recipe WHERE Id={ID}", sqlConnection);
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            try
+            {
+                if (sqlDataReader.Read())
+                {
+                    Recipe recipe = new Recipe
+                    {
+                        Id = (int)sqlDataReader[0],
+                        Name = (string)sqlDataReader[1],
+                        Description = (string)sqlDataReader[2]
+                    };
 
-		public void SaveRecipe(Recipe recipe)
-		{
-			_listRecipes.Add(recipe);
-		}
+                    return recipe;
+                }
+            }
+            finally
+            {
+                sqlDataReader.Close();
+            }
+            return null;
+        }
 
-		public void AddToDB()
-		{
-			//string path = Path.Combine(Application.StartupPath, "LocalDataBase.mdf");
-			string path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\LocalDataBase.mdf";
+        public void CreateRecipe(string Name, string Description)
+        {
+            SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name, Description) VALUES(@ID, @NAME, @DESCRIPTION)", sqlConnection);
+            c.CommandTimeout = 15;
+            c.Parameters.AddWithValue("@ID", getNextIDRecipes() + 1);
+            c.Parameters.AddWithValue("@NAME", Name);
+            c.Parameters.AddWithValue("@DESCRIPTION", Description);
 
-			SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=" + path + ";");
-			conn.Open();
+            c.ExecuteNonQuery();
+        }
 
-			SqlCommand command = new SqlCommand("SELECT * FROM Recipe", conn);
+        public void DeleteRecipe()
+        {
+            SqlCommand c = new SqlCommand("DELETE FROM Recipe", sqlConnection);
+            c.ExecuteNonQuery();
+        }
 
-			SqlDataReader reader = command.ExecuteReader();
-
-			Console.Write("Database result will be printed here:");
-			while (reader.Read())
-			{
-				string text = reader.GetString(0);
-				Console.Write(text);
-			}
-			/*
-			SqlCommand c = new SqlCommand("INSERT INTO DATA (id, name) VALUES(i, v)", conn);
-			c.Parameters.AddWithValue("@i", 1);
-			c.Parameters.AddWithValue("@v", "Jack");
-
-			c.ExecuteNonQuery();
-			*/
-			conn.Dispose();
-		}
-
-	}
-
-    public class Recipe
-    {
-        public List<Comodity> Comodities { get; set; }
-        public string Title { get; set; }
-        public int Id { get; set; }
-        public string Description { get; set; }
+        public int getNextIDRecipes()
+        {
+            SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM Recipe", sqlConnection);
+            return (int)c.ExecuteScalar();
+        }
     }
 
-    public class Comodity
-    {
-        public string ComodityName { get; set; }
+    public class Recipe
+    { 
         public int Id { get; set; }
-        public double Value { get; set; }
-        public string Unit { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Value} {Unit} {ComodityName} ({Id})";
-        }
+        public string Name { get; set; }
+        public string Description { get; set; }
     }
 }

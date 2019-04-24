@@ -21,7 +21,7 @@ namespace RecipeManager.Views
     /// </summary>
     public partial class CreateRecipe : Window
     {
-        public List<Comodity> Comodities = new List<Comodity>();
+        public List<Commodity> Comodities = new List<Commodity>();
         public CreateRecipe()
         {
             InitializeComponent();
@@ -30,7 +30,7 @@ namespace RecipeManager.Views
         private void AddComodity_Click(object sender, RoutedEventArgs e)
         {
             //TODO:  Find the real ID of a commodity!!!
-            Comodities.Add(new Comodity(){ComodityName = TextBoxName.Text, Id = Comodities.Count, Value = Convert.ToDouble(TextBoxValue.Text), Unit = ComboBoxUnit.Text});
+            //Comodities.Add(new Comodity(){ComodityName = TextBoxName.Text, Id = Comodities.Count, Value = Convert.ToDouble(TextBoxValue.Text), Unit = ComboBoxUnit.Text});
             TextBoxName.Clear();
             TextBoxValue.Clear();
 
@@ -49,10 +49,10 @@ namespace RecipeManager.Views
 
         private void EditComodity_Click(object sender, RoutedEventArgs e)
         {
-            Comodity comodity = GetComodityFromComodity(sender);
+            Commodity commodity = GetComodityFromComodity(sender);
 
-            TextBoxValue.Text = comodity.Value + "";
-            TextBoxName.Text = comodity.ComodityName;
+            //TextBoxValue.Text = comodity.Value + "";
+            TextBoxName.Text = commodity.CommodityName;
 
             // Removing from lsit
             Comodities.Remove(GetComodityFromComodity(sender));
@@ -66,7 +66,7 @@ namespace RecipeManager.Views
 
         }
 
-        private Comodity GetComodityFromComodity(object sender)
+        private Commodity GetComodityFromComodity(object sender)
         {
             // Getting ID from button
             var button = sender as Button;
@@ -74,9 +74,9 @@ namespace RecipeManager.Views
             int id = int.Parse(tag.ToString());
 
             // Getting Comodity list index
-            Comodity comodity = Comodities.Find(x => x.Id == id);
+            Commodity commodity = Comodities.Find(x => x.Id == id);
 
-            return comodity;
+            return commodity;
         }
 
         /// <summary>

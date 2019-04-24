@@ -26,20 +26,19 @@ namespace HelloWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        SqlConnection conn;
         private MainWindowController controlMainWindows;
         public MainWindow()
         {
             InitializeComponent();
             this.Title = "Opskrift håndtertinssystem";
             controlMainWindows = new MainWindowController();
+
         }
 
         private void CategoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (CategoryListBox.SelectedItem != null)
                 LoadRecipes((CategoryListBox.SelectedItem as Category));
-
         }
 
         private void LoadRecipes(Category Category)
@@ -61,35 +60,46 @@ namespace HelloWPF
             CategoryListBox.ItemsSource = controlMainWindows.GetCategories();
         }
 
+        /// <summary>
+        /// This method populates the database with dummy data.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        private void LoadDummyData_Click(object sender, RoutedEventArgs e)
+        {
+            controlMainWindows.PopulateDBDummyData();
+        }
+
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)
         {
             CreateRecipe createRecipe = new CreateRecipe();
             createRecipe.ShowDialog();
         }
 
-		private void TestDB(object sender, RoutedEventArgs e)
-		{
-			SqlCommand command = new SqlCommand("SELECT * FROM Recipe", conn);
+		//private void TestDB(object sender, RoutedEventArgs e)
+		//{
+		//	SqlCommand command = new SqlCommand("SELECT * FROM Recipe", conn);
 
-			SqlDataReader reader = command.ExecuteReader();
-            reader.Close();
-			Console.Write("Database result will be printed here:");
-			//while (reader.Read())
-			//{
-				//string text = reader.GetString(0) + "";
-				//Console.Write(text);
-			//}
+		//	SqlDataReader reader = command.ExecuteReader();
+  //          reader.Close();
+		//	Console.Write("Database result will be printed here:");
+		//	//while (reader.Read())
+		//	//{
+		//		//string text = reader.GetString(0) + "";
+		//		//Console.Write(text);
+		//	//}
 			
-			SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name) VALUES(@ID, @NAME)", conn);
-            c.CommandTimeout = 15;
-            //c.CommandType = CommandType.Text;
-			c.Parameters.AddWithValue("@ID", 4);
-			c.Parameters.AddWithValue("@NAME", "Jack The Ripper");
+		//	SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name) VALUES(@ID, @NAME)", conn);
+  //          c.CommandTimeout = 15;
+  //          //c.CommandType = CommandType.Text;
+		//	c.Parameters.AddWithValue("@ID", 4);
+		//	c.Parameters.AddWithValue("@NAME", "Jack The Ripper");
 
-			c.ExecuteNonQuery();
+		//	c.ExecuteNonQuery();
             
 			
-			conn.Dispose();
-		}
+		//	conn.Dispose();
+		//}
 	}
 }

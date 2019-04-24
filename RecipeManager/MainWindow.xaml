@@ -14,14 +14,15 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Ny">
                     <MenuItem Header="_Opskrift" Click="OpenCreateRecipe"/>
-                    <MenuItem Header="_Kategori" Click="TestDB"/>
+                    <MenuItem Header="_Kategori"/>
                     <MenuItem Header="_Råvare"/>
                 </MenuItem>
                 <MenuItem Header="_Luk"/>
                 <MenuItem Header="_Gem"/>
                 <Separator />
-                <MenuItem Header="_Indlæs data" Click="FillOutButton_Click"/>
-                    <Separator />
+                <MenuItem Header="_Indlæs data" Click="LoadDummyData_Click"/>
+                <MenuItem Header="_Slet alt data"/>
+                <Separator />
                 <MenuItem Header="_Exit"/>
             </MenuItem>
         </Menu>

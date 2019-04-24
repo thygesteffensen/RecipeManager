@@ -71,6 +71,12 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Controllers\RecipeController.cs" />
+    <Compile Include="Models\CCCModel.cs" />
+    <Compile Include="Models\CommodityCategoryModel.cs" />
+    <Compile Include="Models\CommodiyModel.cs" />
+    <Compile Include="Models\RCModel.cs" />
+    <Compile Include="Models\RecipeCategoryModel.cs" />
+    <Compile Include="Models\RecipeCommodityModel.cs" />
     <Compile Include="Models\RecipeModel.cs" />
     <Compile Include="Views\CreateRecipe.xaml.cs">
       <DependentUpon>CreateRecipe.xaml</DependentUpon>
@@ -94,7 +100,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\MainWindowController.cs" />
-    <Compile Include="Models\MainWindowModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
