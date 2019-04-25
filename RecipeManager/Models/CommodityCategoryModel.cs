@@ -59,7 +59,15 @@ namespace RecipeManager.Models
         public int getNextIDCommodityCategories()
         {
             SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM CommodityCategory", sqlConnection);
-            return (int)c.ExecuteScalar();
+            object obj = c.ExecuteScalar();
+            if (obj == null)
+            {
+                return 1;
+            }
+            else
+            {
+                return (int)c.ExecuteScalar() + 1;
+            }
         }
     }
 

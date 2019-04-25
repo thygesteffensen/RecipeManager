@@ -29,7 +29,7 @@ namespace RecipeManager.Models
                         Name = (string)sqlDataReader[1]
                     };
 
-                    Console.WriteLine(String.Format("{0}, {1}", sqlDataReader[0], sqlDataReader[1]));
+                    Console.WriteLine($"{sqlDataReader[0]}, {sqlDataReader[1]}");
                     return commodity;
                 }
             }
@@ -40,14 +40,17 @@ namespace RecipeManager.Models
             return null;
         }
 
-        public void CreateCommodity(string Name)
+        public Commodity CreateCommodity(string name)
         {
-            SqlCommand c = new SqlCommand("INSERT INTO Commodity (Id, Name) VALUES(@ID, @NAME)", sqlConnection);
+            int id = GetNextIdCommodity();
+            SqlCommand c = new SqlCommand("INSERT INTO Commodity (Id, name) VALUES(@ID, @NAME)", sqlConnection);
             c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@ID", getNextIDCommodity()+1);
-            c.Parameters.AddWithValue("@NAME", Name);
+            c.Parameters.AddWithValue("@ID", id);
+            c.Parameters.AddWithValue("@NAME", name);
 
             c.ExecuteNonQuery();
+
+            return GetCommodity(id);
         }
 
         public void DeleteCommodity()
@@ -56,10 +59,18 @@ namespace RecipeManager.Models
             c.ExecuteNonQuery();
         }
 
-        public int getNextIDCommodity()
+        public int GetNextIdCommodity()
         {
             SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM Commodity", sqlConnection);
-            return (int)c.ExecuteScalar();
+            object obj = c.ExecuteScalar();
+            if (obj is System.DBNull)
+            {
+                return 1;
+            }
+            else
+            {
+                return (int)c.ExecuteScalar() + 1;
+            }
         }
     }
 

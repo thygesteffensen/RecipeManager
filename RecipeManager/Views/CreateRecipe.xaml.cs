@@ -52,7 +52,7 @@ namespace RecipeManager.Views
             Commodity commodity = GetComodityFromComodity(sender);
 
             //TextBoxValue.Text = comodity.Value + "";
-            TextBoxName.Text = commodity.CommodityName;
+            //TextBoxName.Text = commodity.CommodityName;
 
             // Removing from lsit
             Comodities.Remove(GetComodityFromComodity(sender));

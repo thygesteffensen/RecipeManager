@@ -29,8 +29,8 @@ namespace RecipeManager.Models
                 {
                     RecipeToCategory recipeToCategory = new RecipeToCategory
                     {
-                        recipe = recipeModel.GetRecipe((int)sqlDataReader[0]),
-                        recipeCategory = recipeCategory
+                        Recipe = recipeModel.GetRecipe((int)sqlDataReader[0]),
+                        RecipeCategory = recipeCategory
                     };
 
                     recipeToCategories.Add(recipeToCategory);
@@ -50,22 +50,28 @@ namespace RecipeManager.Models
             c.ExecuteNonQuery();
         }
 
-        public void CreateRC(Recipe recipe, RecipeCategory recipeCategory)
+        public RecipeToCategory CreateRC(Recipe recipe, RecipeCategory recipeCategory)
         {
-            SqlCommand c = new SqlCommand("INSERT INTO RC (RecipeID, ReciopeCategoryID) " +
+            SqlCommand c = new SqlCommand("INSERT INTO RC (RecipeID, RecipeCategoryID) " +
                 "VALUES(@RECIPEID, @RECIPECATEGORYID)", sqlConnection);
             c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@COMMODITYID", recipe.Id);
-            c.Parameters.AddWithValue("@COMMODITYCATEGORYID", recipeCategory.Id);
+            c.Parameters.AddWithValue("@RECIPEID", recipe.Id);
+            c.Parameters.AddWithValue("@RECIPECATEGORYID", recipeCategory.Id);
 
             c.ExecuteNonQuery();
+
+            return new RecipeToCategory()
+            {
+                Recipe = recipe,
+                RecipeCategory = recipeCategory
+            };
         }
     }
 
 
     public class RecipeToCategory
     {
-        public Recipe recipe { get; set; }
-        public RecipeCategory recipeCategory { get; set; }
+        public Recipe Recipe { get; set; }
+        public RecipeCategory RecipeCategory { get; set; }
     }
 }

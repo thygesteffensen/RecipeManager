@@ -43,14 +43,14 @@ namespace RecipeManager.Models
             return null;
         }
 
-        public void CreateRecipeCommodity(int RecipeID, int CommodityID, double Value, string Unit)
+        public void CreateRecipeCommodity(Recipe recipe, Commodity commodity, double Value, string Unit)
         {
             SqlCommand c = new SqlCommand("INSERT INTO RecipeCommodity (RecipeID, CommodityID, Value, Unit) " +
                 "VALUES(@RECIPEID, @COMMODITYID, @VALUE, @UNIT)", sqlConnection);
             c.CommandTimeout = 15;
 
-            c.Parameters.AddWithValue("@RECIPEID", RecipeID);
-            c.Parameters.AddWithValue("@COMMODITYID", CommodityID);
+            c.Parameters.AddWithValue("@RECIPEID", recipe.Id);
+            c.Parameters.AddWithValue("@COMMODITYID", commodity.Id);
             c.Parameters.AddWithValue("@VALUE", Value);
             c.Parameters.AddWithValue("@UNIT", Unit);
 

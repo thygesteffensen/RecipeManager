@@ -42,15 +42,45 @@ namespace RecipeManager.Models
             return null;
         }
 
-        public void CreateRecipe(string Name, string Description)
+        public Recipe CreateRecipe(string Name, string Description)
         {
+            int id = getNextIDRecipes();
             SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name, Description) VALUES(@ID, @NAME, @DESCRIPTION)", sqlConnection);
             c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@ID", getNextIDRecipes() + 1);
+            c.Parameters.AddWithValue("@ID", id);
             c.Parameters.AddWithValue("@NAME", Name);
             c.Parameters.AddWithValue("@DESCRIPTION", Description);
 
             c.ExecuteNonQuery();
+
+            return GetRecipe((id));
+        }
+
+	    public List<Recipe> GetRecipes(RecipeCategory recipeCategory)
+	    {
+	        SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Recipe INNER JOIN RC ON Recipe.Id = RC.RecipeID WHERE RC.RecipeCategoryID = {recipeCategory.Id}", sqlConnection);
+	        SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+	        try
+	        {
+	            List<Recipe> recipes = new List<Recipe>();
+	            if (sqlDataReader.Read())
+	            {
+	                Recipe recipe = new Recipe
+	                {
+	                    Id = (int)sqlDataReader[0],
+	                    Name = (string)sqlDataReader[1],
+	                    Description = (string)sqlDataReader[2]
+	                };
+
+	                recipes.Add(recipe);
+	            }
+
+	            return recipes;
+	        }
+	        finally
+	        {
+	            sqlDataReader.Close();
+	        }
         }
 
         public void DeleteRecipe()
@@ -62,7 +92,15 @@ namespace RecipeManager.Models
         public int getNextIDRecipes()
         {
             SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM Recipe", sqlConnection);
-            return (int)c.ExecuteScalar();
+            object obj = c.ExecuteScalar();
+            if (obj is System.DBNull)
+            {
+                return 1;
+            }
+            else
+            {
+                return (int)c.ExecuteScalar() + 1;
+            }
         }
     }
 

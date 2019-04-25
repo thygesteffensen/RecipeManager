@@ -40,15 +40,43 @@ namespace RecipeManager.Models
             return null;
         }
 
+        public List<RecipeCategory> GetRecipeCategories()
+        {
+            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCategory", sqlConnection);
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            try
+            {
+                List<RecipeCategory> recipeCategories = new List<RecipeCategory>();
+                while (sqlDataReader.Read())
+                {
+                    RecipeCategory recipeCategory = new RecipeCategory
+                    {
+                        Id = (int)sqlDataReader[0],
+                        Name = (string)sqlDataReader[1]
+                    };
+
+                    Console.WriteLine(String.Format("{0}, {1}", sqlDataReader[0], sqlDataReader[1]));
+                    recipeCategories.Add(recipeCategory);
+                }
+
+                return recipeCategories;
+            }
+            finally
+            {
+                sqlDataReader.Close();
+            }
+        }
+
         public RecipeCategory CreateRecipeCategory(string Name)
         {
+            int id = GetNextIdRecipeCategory();
             SqlCommand c = new SqlCommand("INSERT INTO RecipeCategory (Id, Name) VALUES(@ID, @NAME)", sqlConnection);
             c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@ID", getNextIDRecipeCategory() + 1);
+            c.Parameters.AddWithValue("@ID", id);
             c.Parameters.AddWithValue("@NAME", Name);
 
             c.ExecuteNonQuery();
-            return null;
+            return GetRecipeCategory(id);
         }
 
         public void DeleteRecipeCategory()
@@ -57,10 +85,19 @@ namespace RecipeManager.Models
             c.ExecuteNonQuery();
         }
 
-        public int getNextIDRecipeCategory()
+        public int GetNextIdRecipeCategory()
         {
+            /* This query will return null, if the table is empty! */
             SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM RecipeCategory", sqlConnection);
-            return (int)c.ExecuteScalar();
+            object obj = c.ExecuteScalar();
+            if (obj is System.DBNull)
+            {
+                return 1;
+            }
+            else
+            {
+                return (int)c.ExecuteScalar() + 1;
+            }
         }
     }
 

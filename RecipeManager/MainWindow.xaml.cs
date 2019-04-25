@@ -33,24 +33,25 @@ namespace HelloWPF
             this.Title = "Opskrift håndtertinssystem";
             controlMainWindows = new MainWindowController();
 
+            CategoryListBox.ItemsSource = controlMainWindows.GetCategories();
         }
 
         private void CategoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (CategoryListBox.SelectedItem != null)
-                LoadRecipes((CategoryListBox.SelectedItem as Category));
+                LoadRecipes((CategoryListBox.SelectedItem as RecipeCategory));
         }
 
-        private void LoadRecipes(Category Category)
+        private void LoadRecipes(RecipeCategory category)
         {
-            RecipeListBox.ItemsSource = controlMainWindows.GetRecipes(Category);
+            RecipeListBox.ItemsSource = controlMainWindows.GetRecipes(category);
         }
 
         private void RecipeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (RecipeListBox.SelectedItem != null)
             {
-                TextBlockTitle.Text = (RecipeListBox.SelectedItem as Recipe).Title;
+                TextBlockTitle.Text = (RecipeListBox.SelectedItem as Recipe).Name;
                 TextBoxRecipe.Text = (RecipeListBox.SelectedItem as Recipe).Description;
             }
         }
@@ -60,12 +61,6 @@ namespace HelloWPF
             CategoryListBox.ItemsSource = controlMainWindows.GetCategories();
         }
 
-        /// <summary>
-        /// This method populates the database with dummy data.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <returns></returns>
         private void LoadDummyData_Click(object sender, RoutedEventArgs e)
         {
             controlMainWindows.PopulateDBDummyData();
@@ -76,30 +71,5 @@ namespace HelloWPF
             CreateRecipe createRecipe = new CreateRecipe();
             createRecipe.ShowDialog();
         }
-
-		//private void TestDB(object sender, RoutedEventArgs e)
-		//{
-		//	SqlCommand command = new SqlCommand("SELECT * FROM Recipe", conn);
-
-		//	SqlDataReader reader = command.ExecuteReader();
-  //          reader.Close();
-		//	Console.Write("Database result will be printed here:");
-		//	//while (reader.Read())
-		//	//{
-		//		//string text = reader.GetString(0) + "";
-		//		//Console.Write(text);
-		//	//}
-			
-		//	SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name) VALUES(@ID, @NAME)", conn);
-  //          c.CommandTimeout = 15;
-  //          //c.CommandType = CommandType.Text;
-		//	c.Parameters.AddWithValue("@ID", 4);
-		//	c.Parameters.AddWithValue("@NAME", "Jack The Ripper");
-
-		//	c.ExecuteNonQuery();
-            
-			
-		//	conn.Dispose();
-		//}
 	}
 }
