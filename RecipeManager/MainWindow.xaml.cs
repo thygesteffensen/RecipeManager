@@ -30,11 +30,9 @@ namespace HelloWPF
         public MainWindow()
         {
             InitializeComponent();
-            this.Title = "Opskrift håndtertinssystem";
             controlMainWindowController = new MainWindowController();
 
-            List<RecipeCategory> list = controlMainWindowController.GetCategories();
-            CategoryListBox.ItemsSource = list;
+            ReloadView();
         }
 
         private void CategoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -56,21 +54,37 @@ namespace HelloWPF
                 TextBoxRecipe.Text = (RecipeListBox.SelectedItem as Recipe).Description;
             }
         }
-
-        private void FillOutButton_Click(object sender, RoutedEventArgs e)
-        {
-            CategoryListBox.ItemsSource = controlMainWindowController.GetCategories();
-        }
+       
 
         private void LoadDummyData_Click(object sender, RoutedEventArgs e)
         {
             controlMainWindowController.PopulateDBDummyData();
+            ReloadView();
         }
 
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)
         {
+            /*
+             * HENRIK Vil man gøre dette eller vil man oprette controleren først
+             */
             CreateRecipe createRecipe = new CreateRecipe();
             createRecipe.ShowDialog();
+        }
+
+        private void OpenCreateRecipeCategoru(object sender, RoutedEventArgs e)
+        {
+            CreateRecipeCategory createRecipeCategory = new CreateRecipeCategory(controlMainWindowController.GetSqlConnection());
+            createRecipeCategory.ShowDialog();
+            ReloadView();
+        }
+
+        private void ReloadView()
+        {
+            List<RecipeCategory> list = controlMainWindowController.GetCategories();
+            CategoryListBox.ItemsSource = list;
+            RecipeListBox.ItemsSource = null;
+            TextBlockTitle.Text = "";
+            TextBoxRecipe.Text = "";
         }
 	}
 }

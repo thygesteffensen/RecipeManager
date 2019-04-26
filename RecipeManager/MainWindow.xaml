@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HelloWPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Opskrift håndtertinssystem" Height="450" Width="800">
 
 
     <DockPanel>
@@ -14,7 +14,7 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Ny">
                     <MenuItem Header="_Opskrift" Click="OpenCreateRecipe"/>
-                    <MenuItem Header="_Kategori"/>
+                    <MenuItem Header="_Kategori" Click="OpenCreateRecipeCategoru"/>
                     <MenuItem Header="_Råvare"/>
                 </MenuItem>
                 <MenuItem Header="_Luk"/>

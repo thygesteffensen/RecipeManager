@@ -25,6 +25,11 @@ namespace RecipeManager.Controllers
             sqlConnection.Open();
         }
 
+        public SqlConnection GetSqlConnection()
+        {
+            return sqlConnection;
+        }
+
         public List<RecipeCategory> GetCategories()
         {
             RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
@@ -39,9 +44,8 @@ namespace RecipeManager.Controllers
 
             return recipeModel.GetRecipes(recipeCategory);
         }
-        
 
-        public void PopulateDBDummyData()
+        public void DeleteAllContent()
         {
             // All Model are initialized
             CCCModel cccModel = new CCCModel(sqlConnection);
@@ -59,6 +63,19 @@ namespace RecipeManager.Controllers
             recipeModel.DeleteRecipe();
             commodiytModel.DeleteCommodity();
             commodityCategoryModel.DeleteCommodityCategory();
+        }
+
+        public void PopulateDBDummyData()
+        {
+            DeleteAllContent();
+            // All Model are initialized
+            CCCModel cccModel = new CCCModel(sqlConnection);
+            CommodityCategoryModel commodityCategoryModel = new CommodityCategoryModel(sqlConnection);
+            CommodiyModel commodiytModel = new CommodiyModel(sqlConnection);
+            RCModel rcModel = new RCModel(sqlConnection);
+            RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
+            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
+            RecipeModel recipeModel = new RecipeModel(sqlConnection);
             // Add some cool recipes yes.
 
             // Creating Categories

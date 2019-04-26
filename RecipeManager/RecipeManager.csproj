@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Controllers\RecipeCategoryController.cs" />
     <Compile Include="Controllers\RecipeController.cs" />
     <Compile Include="Models\CCCModel.cs" />
     <Compile Include="Models\CommodityCategoryModel.cs" />
