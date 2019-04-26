@@ -63,7 +63,7 @@ namespace RecipeManager.Models
 	        try
 	        {
 	            List<Recipe> recipes = new List<Recipe>();
-	            if (sqlDataReader.Read())
+	            while (sqlDataReader.Read())
 	            {
 	                Recipe recipe = new Recipe
 	                {

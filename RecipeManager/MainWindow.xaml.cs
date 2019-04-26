@@ -26,14 +26,15 @@ namespace HelloWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowController controlMainWindows;
+        private MainWindowController controlMainWindowController;
         public MainWindow()
         {
             InitializeComponent();
             this.Title = "Opskrift håndtertinssystem";
-            controlMainWindows = new MainWindowController();
+            controlMainWindowController = new MainWindowController();
 
-            CategoryListBox.ItemsSource = controlMainWindows.GetCategories();
+            List<RecipeCategory> list = controlMainWindowController.GetCategories();
+            CategoryListBox.ItemsSource = list;
         }
 
         private void CategoryListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -44,7 +45,7 @@ namespace HelloWPF
 
         private void LoadRecipes(RecipeCategory category)
         {
-            RecipeListBox.ItemsSource = controlMainWindows.GetRecipes(category);
+            RecipeListBox.ItemsSource = controlMainWindowController.GetRecipes(category);
         }
 
         private void RecipeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -58,12 +59,12 @@ namespace HelloWPF
 
         private void FillOutButton_Click(object sender, RoutedEventArgs e)
         {
-            CategoryListBox.ItemsSource = controlMainWindows.GetCategories();
+            CategoryListBox.ItemsSource = controlMainWindowController.GetCategories();
         }
 
         private void LoadDummyData_Click(object sender, RoutedEventArgs e)
         {
-            controlMainWindows.PopulateDBDummyData();
+            controlMainWindowController.PopulateDBDummyData();
         }
 
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)

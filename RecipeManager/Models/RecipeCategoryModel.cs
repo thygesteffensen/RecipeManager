@@ -54,8 +54,7 @@ namespace RecipeManager.Models
                         Id = (int)sqlDataReader[0],
                         Name = (string)sqlDataReader[1]
                     };
-
-                    Console.WriteLine(String.Format("{0}, {1}", sqlDataReader[0], sqlDataReader[1]));
+                    
                     recipeCategories.Add(recipeCategory);
                 }
 
