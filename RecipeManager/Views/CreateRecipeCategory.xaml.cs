@@ -17,22 +17,19 @@ using RecipeManager.Models;
 
 namespace RecipeManager.Views
 {
-    /// <summary>
-    /// Interaction logic for CreateRecipeCategory.xaml
-    /// </summary>
     public partial class CreateRecipeCategory : Window
     {
-        private RecipeCategoryController recipeCategoryController;
+        private readonly RecipeCategoryController _recipeCategoryController;
         public CreateRecipeCategory(SqlConnection sqlConnection)
         {
             InitializeComponent();
-            recipeCategoryController = new RecipeCategoryController(sqlConnection);
-            ListBoxRecipeCategories.ItemsSource = recipeCategoryController.GetRecipeCategories();
+            _recipeCategoryController = new RecipeCategoryController(sqlConnection);
+            ListBoxRecipeCategories.ItemsSource = _recipeCategoryController.GetRecipeCategories();
         }
 
         public void SaveRecipeCategory(object sender, RoutedEventArgs e)
         {
-            recipeCategoryController.CreateRecipeCategory(RecipeCategoryTextBox.Text);
+            _recipeCategoryController.CreateRecipeCategory(RecipeCategoryTextBox.Text);
             this.Close();
         }
     }

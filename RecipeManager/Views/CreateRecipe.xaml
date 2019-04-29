@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecipeManager.Views"
+        xmlns:models="clr-namespace:RecipeManager.Models"
         mc:Ignorable="d"
         ResizeMode="NoResize"
         Title="Opret opskrift" Height="450" Width="450">
@@ -14,15 +15,24 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label>Opskrift navn:</Label>
-        <TextBox Grid.Column="1"/>
-        <Label Grid.Row="1" Grid.Column="0"  Margin="0,5,0,5">Råvare:</Label>
-        <Grid Grid.Row="1" Grid.Column="1" Margin="0,5,0,5">
+        <Label Grid.Column="0" Grid.Row="0">Kategori</Label>
+        <ComboBox x:Name="RecipeCategoryDropdown" Grid.Column="1" Grid.Row="0" Margin="0,5,0,5" SelectedValuePath="Content">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}"></TextBlock>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Label Grid.Column="0" Grid.Row="1">Opskrift navn:</Label>
+        <TextBox x:Name="RecipeName" Grid.Column="1" Grid.Row="1"/>
+        <Label Grid.Row="2" Grid.Column="0"  Margin="0,5,0,5">Råvare:</Label>
+        <Grid Grid.Row="2" Grid.Column="1" Margin="0,5,0,5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="80"/>
@@ -33,16 +43,18 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBox x:Name="TextBoxValue" PreviewTextInput="NumberValidationTextBox" Grid.Row="0" Grid.Column="0" Margin="0,0,2,0" />
-            <ComboBox x:Name="ComboBoxUnit" Grid.Row="0" Grid.Column="1" Margin="2,0,2,0" >
-                <ComboBoxItem IsSelected="True">gram</ComboBoxItem>
-                <ComboBoxItem>kilogram</ComboBoxItem>
-                <ComboBoxItem>dl</ComboBoxItem>
-                <ComboBoxItem>L</ComboBoxItem>
+            <ComboBox x:Name="ComboBoxUnit" Grid.Row="0" Grid.Column="1" Margin="2,0,2,0"
+                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type models:Units}}}"/>
+            <ComboBox x:Name="CommodityName" Grid.Row="0" Grid.Column="2" Margin="2,0,2,0" IsEditable="True">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
             </ComboBox>
-            <TextBox x:Name="TextBoxName" Grid.Row="0" Grid.Column="2" Margin="2,0,2,0" />
-            <Button Content="Tilføj" Grid.Row="0" Grid.Column="3" Margin="2,0,0,0" Click="AddComodity_Click"/>
+            <Button Content="Tilføj" Grid.Row="0" Grid.Column="3" Margin="2,0,0,0" Click="AddCommodity_Click"/>
         </Grid>
-        <ListBox x:Name="ListBoxComodties" Grid.Row="2" Grid.Column="1" Margin="0,0,0,5">
+        <ListBox x:Name="ListBoxCommodities" Grid.Row="3" Grid.Column="1" Margin="0,0,0,5">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -55,15 +67,15 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="{Binding Value}" Margin="5,0,5,0"></TextBlock>
 						<TextBlock Grid.Column="1" Text="{Binding Unit}" Margin="5,0,5,0"></TextBlock>
-						<TextBlock Grid.Column="2" Text="{Binding ComodityName}" Margin="5,0,5,0"></TextBlock>
-						<Button Grid.Column="3" Click="RemoveComodity_Click" Tag="{Binding Id}" Margin="5,0,5,0">Fjern</Button>
-						<Button Grid.Column="4" Click="EditComodity_Click" Tag="{Binding Id}" Margin="5,0,5,0">Ændre</Button>
+						<TextBlock Grid.Column="2" Text="{Binding Name}" Margin="5,0,5,0"></TextBlock>
+						<Button Grid.Column="3" Click="RemoveCommodity_Click" Tag="{Binding Id}" Margin="5,0,5,0">Fjern</Button>
+						<Button Grid.Column="4" Click="EditCommodity_Click" Tag="{Binding Id}" Margin="5,0,5,0">Ændre</Button>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Label Grid.Row="3">Beskrivelse:</Label>
-        <TextBox x:Name="TextBox" Grid.Row="3" Grid.Column="1" AcceptsReturn="True" />
-        <Button Grid.Row="4" Grid.ColumnSpan="2" Margin="0,5,0,0">Gem opskrift</Button>
+        <Label Grid.Row="4">Beskrivelse:</Label>
+        <TextBox x:Name="Description" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" />
+        <Button Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,0,0" Click="SaveRecipe">Gem opskrift</Button>
     </Grid>
 </Window>

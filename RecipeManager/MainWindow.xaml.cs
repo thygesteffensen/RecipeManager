@@ -1,36 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using RecipeManager;
 using RecipeManager.Controllers;
-using RecipeManager.Views;
 using RecipeManager.Models;
-using System.Data.SqlClient;
-using System.Data;
+using RecipeManager.Views;
 
-namespace HelloWPF
+namespace RecipeManager
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
-        private MainWindowController controlMainWindowController;
+        private readonly MainWindowController _controlMainWindowController;
         public MainWindow()
         {
             InitializeComponent();
-            controlMainWindowController = new MainWindowController();
+            _controlMainWindowController = new MainWindowController();
 
             ReloadView();
         }
@@ -43,7 +25,7 @@ namespace HelloWPF
 
         private void LoadRecipes(RecipeCategory category)
         {
-            RecipeListBox.ItemsSource = controlMainWindowController.GetRecipes(category);
+            RecipeListBox.ItemsSource = _controlMainWindowController.GetRecipes(category);
         }
 
         private void RecipeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -54,33 +36,40 @@ namespace HelloWPF
                 TextBoxRecipe.Text = (RecipeListBox.SelectedItem as Recipe).Description;
             }
         }
-       
+
 
         private void LoadDummyData_Click(object sender, RoutedEventArgs e)
         {
-            controlMainWindowController.PopulateDBDummyData();
+            _controlMainWindowController.PopulateDBDummyData();
+            ReloadView();
+        }
+
+        private void WipeDatabase(object sender, RoutedEventArgs e)
+        {
+            _controlMainWindowController.DeleteAllContent();
             ReloadView();
         }
 
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)
         {
             /*
-             * HENRIK Vil man gøre dette eller vil man oprette controleren først
+             * HENRIK Vil man gøre dette eller vil man oprette controlleren først
              */
-            CreateRecipe createRecipe = new CreateRecipe();
+            CreateRecipe createRecipe = new CreateRecipe(_controlMainWindowController.GetSqlConnection());
             createRecipe.ShowDialog();
+            ReloadView();
         }
 
-        private void OpenCreateRecipeCategoru(object sender, RoutedEventArgs e)
+        private void OpenCreateRecipeCategory(object sender, RoutedEventArgs e)
         {
-            CreateRecipeCategory createRecipeCategory = new CreateRecipeCategory(controlMainWindowController.GetSqlConnection());
+            CreateRecipeCategory createRecipeCategory = new CreateRecipeCategory(_controlMainWindowController.GetSqlConnection());
             createRecipeCategory.ShowDialog();
             ReloadView();
         }
 
         private void ReloadView()
         {
-            List<RecipeCategory> list = controlMainWindowController.GetCategories();
+            List<RecipeCategory> list = _controlMainWindowController.GetCategories();
             CategoryListBox.ItemsSource = list;
             RecipeListBox.ItemsSource = null;
             TextBlockTitle.Text = "";

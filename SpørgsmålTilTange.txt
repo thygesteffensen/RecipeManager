@@ -1,0 +1,10 @@
+MainWindowController:
+	Hvad skal jeg gøre for at få stien til min database?
+
+	SqlConnection:
+		Hvordan skal denne håndteres?
+
+Er strukturen korrekt i forhold til MVC MVVC?
+
+MainWindow.xaml.cs:
+	Linje 56. Hvad vil man gøre, controller først eller view?

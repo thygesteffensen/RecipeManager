@@ -1,9 +1,8 @@
-﻿<Window x:Class="HelloWPF.MainWindow"
+﻿<Window x:Class="RecipeManager.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:HelloWPF"
         mc:Ignorable="d"
         Title="Opskrift håndtertinssystem" Height="450" Width="800">
 
@@ -14,14 +13,14 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Ny">
                     <MenuItem Header="_Opskrift" Click="OpenCreateRecipe"/>
-                    <MenuItem Header="_Kategori" Click="OpenCreateRecipeCategoru"/>
+                    <MenuItem Header="_Kategori" Click="OpenCreateRecipeCategory"/>
                     <MenuItem Header="_Råvare"/>
                 </MenuItem>
                 <MenuItem Header="_Luk"/>
                 <MenuItem Header="_Gem"/>
                 <Separator />
                 <MenuItem Header="_Indlæs data" Click="LoadDummyData_Click"/>
-                <MenuItem Header="_Slet alt data"/>
+                <MenuItem Header="_Slet alt data" Click="WipeDatabase"/>
                 <Separator />
                 <MenuItem Header="_Exit"/>
             </MenuItem>

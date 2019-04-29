@@ -10,21 +10,21 @@ namespace RecipeManager.Controllers
 {
     class RecipeCategoryController
     {
-        private RecipeCategoryModel recipeCategoryModel;
+        private readonly RecipeCategoryModel _recipeCategoryModel;
 
         public RecipeCategoryController(SqlConnection sqlConnection)
         {
-            recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
+            _recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
         }
 
         public List<RecipeCategory> GetRecipeCategories()
         {
-            return recipeCategoryModel.GetRecipeCategories();
+            return _recipeCategoryModel.GetRecipeCategories();
         }
 
         public void CreateRecipeCategory(string recipeCategoryName)
         {
-            recipeCategoryModel.CreateRecipeCategory(recipeCategoryName);
+            _recipeCategoryModel.CreateRecipeCategory(recipeCategoryName);
         }
     }
 }

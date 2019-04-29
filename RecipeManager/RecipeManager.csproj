@@ -85,6 +85,7 @@
     <Compile Include="Views\CreateRecipeCategory.xaml.cs">
       <DependentUpon>CreateRecipeCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\EnumUtility.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -124,6 +125,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

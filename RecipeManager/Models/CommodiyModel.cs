@@ -40,6 +40,33 @@ namespace RecipeManager.Models
             return null;
         }
 
+        public List<Commodity> GetCommodities()
+        {
+            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Commodity", sqlConnection);
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            try
+            {
+                List<Commodity> commodities = new List<Commodity>();
+                while (sqlDataReader.Read())
+                {
+                    Commodity commodity = new Commodity
+                    {
+                        Id = (int)sqlDataReader[0],
+                        Name = (string)sqlDataReader[1]
+                    };
+
+                    Console.WriteLine($"{sqlDataReader[0]}, {sqlDataReader[1]}");
+                    commodities.Add(commodity); 
+                }
+
+                return commodities;
+            }
+            finally
+            {
+                sqlDataReader.Close();
+            }
+        }
+
         public Commodity CreateCommodity(string name)
         {
             int id = GetNextIdCommodity();

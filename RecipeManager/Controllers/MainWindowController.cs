@@ -15,9 +15,8 @@ namespace RecipeManager.Controllers
             //string path = Path.Combine(Application.StartupPath, "RecipeMangerDatabase.mdf");
             //string startupPath = Environment.CurrentDirectory;
             //string path = startupPath + "\\RecipeMangerDatabase.mdf";
-            //string path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf";  // Desktop
-            string path =
-                "C:\\Users\\thyge\\source\\repos\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf"; // Laptop
+            string path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf";  // Desktop
+            //string path = "C:\\Users\\thyge\\source\\repos\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf"; // Laptop
 
             //SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=" + path + ";");
             sqlConnection = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"" + path +
@@ -90,7 +89,7 @@ namespace RecipeManager.Controllers
 
             Recipe recipeBananaSplit = recipeModel.CreateRecipe("Banana split", "Pisk flødeskom. \nHent Whikeyen.\nTag isen frem.\nPil en banan.\n Anret og server");
 
-            // Now we need to bind them togehter! We do need these objets :D
+            // Now we need to bind them together! We do need these objects :D
             rcModel.CreateRC(recipeLasagna, recipeCategoryAftensmad);
             rcModel.CreateRC(recipeSovs, recipeCategoryAftensmad);
             rcModel.CreateRC(recipeBananaSplit, recipeCategoryDessert);
