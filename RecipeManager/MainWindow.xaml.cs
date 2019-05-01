@@ -60,6 +60,13 @@ namespace RecipeManager
             ReloadView();
         }
 
+        private void OpenScrapeLink(object sender, RoutedEventArgs e)
+        {
+            Scrape scrape = new Scrape(_controlMainWindowController.GetSqlConnection());
+            scrape.ShowDialog();
+            ReloadView();
+        }
+
         private void OpenCreateRecipeCategory(object sender, RoutedEventArgs e)
         {
             CreateRecipeCategory createRecipeCategory = new CreateRecipeCategory(_controlMainWindowController.GetSqlConnection());

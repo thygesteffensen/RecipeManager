@@ -72,6 +72,7 @@
     </ApplicationDefinition>
     <Compile Include="Controllers\RecipeCategoryController.cs" />
     <Compile Include="Controllers\RecipeController.cs" />
+    <Compile Include="Controllers\ScrapeController.cs" />
     <Compile Include="Models\CCCModel.cs" />
     <Compile Include="Models\CommodityCategoryModel.cs" />
     <Compile Include="Models\CommodiyModel.cs" />
@@ -86,6 +87,9 @@
       <DependentUpon>CreateRecipeCategory.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EnumUtility.cs" />
+    <Compile Include="Views\Scrape.xaml.cs">
+      <DependentUpon>Scrape.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -103,6 +107,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CreateRecipeCategory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Scrape.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

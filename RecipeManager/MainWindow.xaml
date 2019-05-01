@@ -12,7 +12,10 @@
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_File">
                 <MenuItem Header="_Ny">
-                    <MenuItem Header="_Opskrift" Click="OpenCreateRecipe"/>
+                    <MenuItem Header="_Opskrift">
+                        <MenuItem Header="_Manuel" Click="OpenCreateRecipe"/>    
+                        <MenuItem Header="_Fra link" Click="OpenScrapeLink"/>
+                    </MenuItem>
                     <MenuItem Header="_Kategori" Click="OpenCreateRecipeCategory"/>
                     <MenuItem Header="_Råvare"/>
                 </MenuItem>
