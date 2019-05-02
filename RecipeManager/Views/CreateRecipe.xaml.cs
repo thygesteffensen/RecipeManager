@@ -193,13 +193,4 @@ namespace RecipeManager.Views
             e.Handled = !regex.IsMatch(e.Text);
         }
     }
-
-    internal class CommodityShadow
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public Commodity Commodity { get; set; }
-        public double Value { get; set; }
-        public Units Unit { get; set; }
-    }
 }

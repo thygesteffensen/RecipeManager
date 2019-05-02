@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using RecipeManager.Models;
+using RecipeManager.Views;
 
 
 namespace RecipeManager.Controllers
@@ -15,8 +16,8 @@ namespace RecipeManager.Controllers
             //string path = Path.Combine(Application.StartupPath, "RecipeMangerDatabase.mdf");
             //string startupPath = Environment.CurrentDirectory;
             //string path = startupPath + "\\RecipeMangerDatabase.mdf";
-            //string path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf";  // Desktop
-            string path = "C:\\Users\\thyge\\source\\repos\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf"; // Laptop
+            string path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf";  // Desktop
+//            string path = "C:\\Users\\thyge\\source\\repos\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf"; // Laptop
 
             //SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=" + path + ";");
             sqlConnection = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"" + path +
@@ -42,6 +43,11 @@ namespace RecipeManager.Controllers
             RecipeModel recipeModel = new RecipeModel(sqlConnection);
 
             return recipeModel.GetRecipes(recipeCategory);
+        }
+
+        public void OpenScrapeLink()
+        {
+            ScrapeController scrapeController = new ScrapeController(sqlConnection);
         }
 
         public void DeleteAllContent()

@@ -106,4 +106,16 @@ namespace RecipeManager.Models
         public int Id { get; set; }
         public string Name { get; set; }
     }
+
+    /// <summary>
+    /// Used to shawdow unknown commodities...
+    /// </summary>
+    public class CommodityShadow
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public Commodity Commodity { get; set; }
+        public double Value { get; set; }
+        public Units Unit { get; set; }
+    }
 }

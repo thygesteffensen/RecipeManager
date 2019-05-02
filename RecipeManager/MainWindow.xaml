@@ -49,7 +49,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <TextBlock x:Name="TextBlockTitle" DockPanel.Dock="Top" FontSize="24" Margin="10,10,0,0" Height="32"/>
-        <TextBox x:Name="TextBoxRecipe" Margin="10,10,10,10" VerticalAlignment="Stretch"/>
+        <TextBox x:Name="TextBoxRecipe" Margin="10,10,10,10" VerticalAlignment="Stretch" TextWrapping="WrapWithOverflow" />
 
     </DockPanel>
 </Window>

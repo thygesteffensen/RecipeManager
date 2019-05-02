@@ -62,8 +62,7 @@ namespace RecipeManager
 
         private void OpenScrapeLink(object sender, RoutedEventArgs e)
         {
-            Scrape scrape = new Scrape(_controlMainWindowController.GetSqlConnection());
-            scrape.ShowDialog();
+            _controlMainWindowController.OpenScrapeLink();
             ReloadView();
         }
 

@@ -6,15 +6,35 @@
         xmlns:local="clr-namespace:RecipeManager.Views"
         mc:Ignorable="d"
         Title="Opret opskrift" Height="450" Width="450">
-    <Grid>
+    <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="AUto"/>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBox x:Name="TextBox" Grid.Column="0" Grid.Row="0">https://www.valdemarsro.dk/pasta-arrabiata/</TextBox>
-        <Button Grid.Column="1" Grid.Row="0" Click="Get">Send</Button>
+        <!-- The first step of this procedure -->
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" TextWrapping="WrapWithOverflow">Lige nu understøtter vi kun opskrifter fra madbloggen, Valdemarso.dk. I fremtiden vil vi arbejde på at understøtte flere sider</TextBlock>
+        <Label Grid.Column="0" Grid.Row="1">Kategori</Label>
+        <ComboBox x:Name="RecipeCategoryDropdown" Grid.Column="1" Grid.Row="1" Margin="0,5,0,5"
+                  SelectedValuePath="Content">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Label Grid.Row="2" Grid.Column="0">URL:</Label>
+        <TextBox x:Name="TextBox" Grid.Column="1" Grid.Row="2">https://www.valdemarsro.dk/pasta-arrabiata/</TextBox>
+        <Button x:Name="GetRecipeButton" Grid.Row="3" Grid.ColumnSpan="2" Margin="0,5,0,0" Click="Get">Hent opskrift</Button>
+        <!-- The verification step of the procedure -->
+        <TextBlock Name="NotificationTextBlock" TextWrapping="WrapWithOverflow" Grid.Row="4" Grid.ColumnSpan="2"></TextBlock>
     </Grid>
 </Window>
