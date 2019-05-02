@@ -80,7 +80,7 @@ namespace RecipeManager.Controllers
 
                 double value = StringToDouble(list_list[0]);
                 
-
+                string unit = 
 
                 index++;
             }
