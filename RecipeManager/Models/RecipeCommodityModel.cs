@@ -72,6 +72,6 @@ namespace RecipeManager.Models
         public string Unit { get; set; }
     }
 
-    public enum Units { Kilogram, gram, dl, L, stk, tsk, spsk };
+    public enum Units { kg, g, dl, L, stk, tsk, spsk };
 }
 

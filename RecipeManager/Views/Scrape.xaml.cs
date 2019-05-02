@@ -35,6 +35,66 @@ namespace RecipeManager.Views
             RecipeCategoryDropdown.SelectedIndex = 0;
         }
 
+        private bool confirmeState = false;
+        private int listIndex = 0;
+        private List<ScrapeController.CommodityShadowConfirmed> _shadowList;
+        public void ConfirmIngredient(List<ScrapeController.CommodityShadowConfirmed> shadowList)
+        {
+            this._shadowList = shadowList;
+            PopulateConfirmFields();
+        }
+
+        public void PopulateConfirmFields()
+        {
+            if (listIndex == _shadowList.Count)
+            {
+                scrapeController.StoreRecipe(_shadowList);
+                return;
+            }
+
+            var temp = _shadowList[listIndex];
+            if (temp.ConfirmedCommodity)
+            {
+                NameGuess.Text = temp.Commodity.Name;
+                CommodityName.SelectedItem = temp.Commodity;
+            }
+            else
+            {
+                NameGuess.Text = temp.Name;
+                CommodityName.Text = temp.Name;
+            }
+
+            if (temp.ConfirmedUnit)
+            {
+                UnitGuess.Text = temp.Unit.ToString();
+                ComboBoxUnit.SelectedItem = temp.Unit;
+            }
+            else
+            {
+                UnitGuess.Text = temp.UnitString;
+                ComboBoxUnit.SelectedItem = temp.UnitString;
+            }
+
+            AmountGuess.Text = temp.Value + "";
+            ValueConfirmed.Text = temp.Value + "";
+        }
+
+        public void ConfirmRecipe(object sender, RoutedEventArgs e)
+        {
+            var temp = _shadowList[listIndex];
+            temp.Commodity = (Commodity) CommodityName.SelectedItem;
+            temp.Unit = (Units) ComboBoxUnit.SelectedItem;
+            temp.Value = Convert.ToDouble(ValueConfirmed.Text);
+            listIndex++;
+            PopulateConfirmFields();
+        }
+
+
+        private void ErrorDialog(string message)
+        {
+            MessageBox.Show(message, "Fejl", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
         public void Get(object sender, RoutedEventArgs e)
         {
             // Getting the view ready

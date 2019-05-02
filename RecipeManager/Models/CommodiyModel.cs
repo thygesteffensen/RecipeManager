@@ -10,6 +10,7 @@ namespace RecipeManager.Models
     class CommodiyModel
     {
         SqlConnection sqlConnection;
+
         public CommodiyModel(SqlConnection sqlConnection)
         {
             this.sqlConnection = sqlConnection;
@@ -17,16 +18,16 @@ namespace RecipeManager.Models
 
         public Commodity GetCommodity(int ID)
         {
-            SqlCommand sqlCommand= new SqlCommand($"SELECT * FROM Commodity WHERE Id={ID}", sqlConnection);
+            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Commodity WHERE Id={ID}", sqlConnection);
             SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
             try
             {
-                if(sqlDataReader.Read())
+                if (sqlDataReader.Read())
                 {
                     Commodity commodity = new Commodity
                     {
-                        Id = (int)sqlDataReader[0],
-                        Name = (string)sqlDataReader[1]
+                        Id = (int) sqlDataReader[0],
+                        Name = (string) sqlDataReader[1]
                     };
 
                     Console.WriteLine($"{sqlDataReader[0]}, {sqlDataReader[1]}");
@@ -37,12 +38,22 @@ namespace RecipeManager.Models
             {
                 sqlDataReader.Close();
             }
+
             return null;
         }
 
-        public List<Commodity> GetCommodities()
+        public List<Commodity> GetCommodities(string partialName = null)
         {
-            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Commodity", sqlConnection);
+            SqlCommand sqlCommand;
+            if (partialName == null)
+            {
+                sqlCommand = new SqlCommand($"SELECT * FROM Commodity", sqlConnection);
+            }
+            else
+            {
+                sqlCommand = new SqlCommand($"SELECT * FROM Commodity WHERE Name='%{partialName}%'", sqlConnection);
+            }
+
             SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
             try
             {
@@ -51,12 +62,12 @@ namespace RecipeManager.Models
                 {
                     Commodity commodity = new Commodity
                     {
-                        Id = (int)sqlDataReader[0],
-                        Name = (string)sqlDataReader[1]
+                        Id = (int) sqlDataReader[0],
+                        Name = (string) sqlDataReader[1]
                     };
 
                     Console.WriteLine($"{sqlDataReader[0]}, {sqlDataReader[1]}");
-                    commodities.Add(commodity); 
+                    commodities.Add(commodity);
                 }
 
                 return commodities;
@@ -96,7 +107,7 @@ namespace RecipeManager.Models
             }
             else
             {
-                return (int)c.ExecuteScalar() + 1;
+                return (int) c.ExecuteScalar() + 1;
             }
         }
     }

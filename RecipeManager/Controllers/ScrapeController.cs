@@ -17,6 +17,7 @@ namespace RecipeManager.Controllers
     {
         private Scrape scrape;
         private SqlConnection sqlConnection;
+        private CommodiyModel commodiyModel;
 
         string recipeName;
         List<string> recipeDescription = new List<string>();
@@ -25,6 +26,7 @@ namespace RecipeManager.Controllers
         public ScrapeController(SqlConnection sqlConnection)
         {
             this.sqlConnection = sqlConnection;
+            this.commodiyModel = new CommodiyModel(sqlConnection);
 
             scrape = new Scrape(sqlConnection, this);
             scrape.SetContentCategoryDropdown(GetRecipeCategories());
@@ -69,21 +71,58 @@ namespace RecipeManager.Controllers
 
         private void VerifyIngredients()
         {
-            List<CommodityShadow> shadowList = new List<CommodityShadow>();
+            List<CommodityShadowConfirmed> shadowList = new List<CommodityShadowConfirmed>();
 
             var length = ingredietnsListlist.Count;
             var index = 0;
             foreach (var ingredient in ingredietnsListlist)
             {
-                string ingredient_stuff = ingredient.Split(',')[0]; // Remove text after comma
-                var list_list = ingredient_stuff.Split(' ');
+                var ingredientStuff = ingredient.Split(',')[0]; // Remove text after comma
+                var listList = ingredientStuff.Split(' '); // Splitting the string
+                // Creating the shadow object
+                CommodityShadowConfirmed shadowObject = new CommodityShadowConfirmed();
 
-                double value = StringToDouble(list_list[0]);
+                // Determine the commodity
+                var commodityName = string.Join(" ", listList.Skip(2));
+                List<Commodity> commodities = commodiyModel.GetCommodities(partialName: commodityName);
+                if (commodities.Count == 1)
+                {
+                    // There is only one result, thus we have found the right commodity.
+                    shadowObject.Commodity = commodities[0];
+                    shadowObject.ConfirmedCommodity = true;
+                }
+
+                // Determine the value
+                shadowObject.Value = StringToDouble(listList[0]);
+
+                // Determine the unit
+                var unitString = listList[1];
+                var unitDefined = Enum.TryParse<Units>(unitString, out var unit);
+                shadowObject.ConfirmedUnit = unitDefined;
+                if (unitDefined)
+                {
+                    shadowObject.Unit = unit;
+                }
+
+                shadowObject.UnitString = unitString;
                 
-                string unit = 
-
-                index++;
+                shadowList.Add(shadowObject);
             }
+
+            scrape.ConfirmIngredient(shadowList);
+        }
+
+        public void StoreRecipe(List<CommodityShadowConfirmed> list)
+        {
+            // Store it here
+        }
+
+        public class CommodityShadowConfirmed : CommodityShadow
+        {
+            public bool ConfirmedUnit { get; set; }
+            public bool ConfirmedValue { get; set; }
+            public bool ConfirmedCommodity { get; set; }
+            public string UnitString { get; set; }
         }
 
         private double StringToDouble(string input)

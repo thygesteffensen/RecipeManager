@@ -106,7 +106,7 @@ namespace RecipeManager.Controllers
 
             // Now we will bind them to the recipe
             recipeCommodityModel.CreateRecipeCommodity(recipeLasagna, onion, 2, "stk");
-            recipeCommodityModel.CreateRecipeCommodity(recipeLasagna, meat, 500, "gram");
+            recipeCommodityModel.CreateRecipeCommodity(recipeLasagna, meat, 500, "g");
 
 
             commodiytModel.GetCommodity(1);
