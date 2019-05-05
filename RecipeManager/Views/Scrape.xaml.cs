@@ -27,6 +27,8 @@ namespace RecipeManager.Views
         {
             InitializeComponent();
             this.scrapeController = scrapeController;
+
+            CommodityName.ItemsSource = scrapeController.GetCommodities();
         }
 
         public void SetContentCategoryDropdown(List<RecipeCategory> list)
@@ -46,12 +48,6 @@ namespace RecipeManager.Views
 
         public void PopulateConfirmFields()
         {
-            if (listIndex == _shadowList.Count)
-            {
-                scrapeController.StoreRecipe(_shadowList);
-                return;
-            }
-
             var temp = _shadowList[listIndex];
             if (temp.ConfirmedCommodity)
             {
@@ -86,6 +82,11 @@ namespace RecipeManager.Views
             temp.Unit = (Units) ComboBoxUnit.SelectedItem;
             temp.Value = Convert.ToDouble(ValueConfirmed.Text);
             listIndex++;
+            if (listIndex == _shadowList.Count)
+            {
+                scrapeController.StoreRecipe(_shadowList,(RecipeCategory) RecipeCategoryDropdown.SelectedItem);
+                return;
+            }
             PopulateConfirmFields();
         }
 

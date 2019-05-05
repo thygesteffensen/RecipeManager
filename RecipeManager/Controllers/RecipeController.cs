@@ -10,14 +10,14 @@ namespace RecipeManager.Controllers
         private RecipeModel _recipeModel;
         private RCModel _rcModel;
         private RecipeCommodityModel _recipeCommodityModel;
-        private CommodiyModel _commodiyModel;
+        private CommodityModel _commodityModel;
 
         public RecipeController(SqlConnection sqlConnection)
         {
             _recipeModel = new RecipeModel(sqlConnection);
             _rcModel = new RCModel(sqlConnection);
             _recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
-            _commodiyModel = new CommodiyModel(sqlConnection);
+            _commodityModel = new CommodityModel(sqlConnection);
         }
 
         public void CreateRecipe(List<CommodityShadow> commodityList, string recipeName, string recipeDescription,
@@ -36,7 +36,7 @@ namespace RecipeManager.Controllers
                 }
                 else
                 {
-                    Commodity commodity = _commodiyModel.CreateCommodity(commodityShadow.Name);
+                    Commodity commodity = _commodityModel.CreateCommodity(commodityShadow.Name);
                     _recipeCommodityModel.CreateRecipeCommodity(temp, commodity, commodityShadow.Value,
                         commodityShadow.Unit.ToString());
                 }

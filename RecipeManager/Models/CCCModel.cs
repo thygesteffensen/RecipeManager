@@ -22,7 +22,7 @@ namespace RecipeManager.Models
             SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
             try
             {
-                CommodiyModel commodiytModel = new CommodiyModel(sqlConnection);
+                CommodityModel commodiytModel = new CommodityModel(sqlConnection);
                 List<CommodityToCategory> commodityToCategories = new List<CommodityToCategory>();
 
                 while (sqlDataReader.Read())

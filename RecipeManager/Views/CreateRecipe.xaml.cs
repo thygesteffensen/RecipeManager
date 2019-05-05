@@ -26,7 +26,7 @@ namespace RecipeManager.Views
         private List<CommodityShadow> Commodities = new List<CommodityShadow>();
         private RecipeController recipeController;
         private RecipeCategoryController recipeCategoryController;
-        private CommodiyModel commodityModel;
+        private CommodityModel commodityModel;
 
         public int Id { get; private set; }
 
@@ -36,7 +36,7 @@ namespace RecipeManager.Views
 
             recipeController = new RecipeController(sqlConnection);
             recipeCategoryController = new RecipeCategoryController(sqlConnection);
-            commodityModel = new CommodiyModel(sqlConnection);
+            commodityModel = new CommodityModel(sqlConnection);
 
             RecipeCategoryDropdown.ItemsSource = recipeCategoryController.GetRecipeCategories();
             RecipeCategoryDropdown.SelectedIndex = 0;

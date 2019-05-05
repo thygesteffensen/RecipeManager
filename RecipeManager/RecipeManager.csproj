@@ -75,7 +75,7 @@
     <Compile Include="Controllers\ScrapeController.cs" />
     <Compile Include="Models\CCCModel.cs" />
     <Compile Include="Models\CommodityCategoryModel.cs" />
-    <Compile Include="Models\CommodiyModel.cs" />
+    <Compile Include="Models\CommodityModel.cs" />
     <Compile Include="Models\RCModel.cs" />
     <Compile Include="Models\RecipeCategoryModel.cs" />
     <Compile Include="Models\RecipeCommodityModel.cs" />

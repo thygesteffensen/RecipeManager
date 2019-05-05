@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 using RecipeManager.Models;
 using RecipeManager.Views;
 
@@ -17,7 +18,10 @@ namespace RecipeManager.Controllers
     {
         private Scrape scrape;
         private SqlConnection sqlConnection;
-        private CommodiyModel commodiyModel;
+        private CommodityModel _commodityModel;
+        private RecipeModel _recipeModel;
+        private RCModel _rcModel;
+        private RecipeCommodityModel _recipeCommodityModel;
 
         string recipeName;
         List<string> recipeDescription = new List<string>();
@@ -26,11 +30,19 @@ namespace RecipeManager.Controllers
         public ScrapeController(SqlConnection sqlConnection)
         {
             this.sqlConnection = sqlConnection;
-            this.commodiyModel = new CommodiyModel(sqlConnection);
+            this._commodityModel = new CommodityModel(sqlConnection);
+            this._recipeModel = new RecipeModel(sqlConnection);
+            this._rcModel = new RCModel(sqlConnection);
+            this._recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
 
             scrape = new Scrape(sqlConnection, this);
             scrape.SetContentCategoryDropdown(GetRecipeCategories());
             scrape.ShowDialog();
+        }
+
+        public List<Commodity> GetCommodities()
+        {
+            return _commodityModel.GetCommodities();
         }
 
         public void ScrapeWebsite(string url)
@@ -71,25 +83,43 @@ namespace RecipeManager.Controllers
 
         private void VerifyIngredients()
         {
+            Regex re = new Regex(@"^([\d]*)?");
+
             List<CommodityShadowConfirmed> shadowList = new List<CommodityShadowConfirmed>();
 
             var length = ingredietnsListlist.Count;
             var index = 0;
             foreach (var ingredient in ingredietnsListlist)
             {
-                var ingredientStuff = ingredient.Split(',')[0]; // Remove text after comma
-                var listList = ingredientStuff.Split(' '); // Splitting the string
                 // Creating the shadow object
                 CommodityShadowConfirmed shadowObject = new CommodityShadowConfirmed();
 
+                var ingredientStuff = ingredient.Split(',')[0]; // Remove text after comma
+                Match m = re.Match(ingredientStuff);
+                if (m.Groups[1].Length == 0)
+                {
+                    // Now we have something like "salt" or "frisk peber" which do not have value or unit :(
+                    shadowObject.Name = ingredientStuff;
+                    shadowObject.Value = 1;
+                    shadowObject.Unit = Units.stk;
+                    continue;
+                }
+
+                var listList = ingredientStuff.Split(' '); // Splitting the string
+
+
                 // Determine the commodity
                 var commodityName = string.Join(" ", listList.Skip(2));
-                List<Commodity> commodities = commodiyModel.GetCommodities(partialName: commodityName);
+                List<Commodity> commodities = _commodityModel.GetCommodities(partialName: commodityName);
                 if (commodities.Count == 1)
                 {
                     // There is only one result, thus we have found the right commodity.
                     shadowObject.Commodity = commodities[0];
                     shadowObject.ConfirmedCommodity = true;
+                }
+                else
+                {
+                    shadowObject.Name = commodityName;
                 }
 
                 // Determine the value
@@ -105,16 +135,43 @@ namespace RecipeManager.Controllers
                 }
 
                 shadowObject.UnitString = unitString;
-                
+
                 shadowList.Add(shadowObject);
             }
 
             scrape.ConfirmIngredient(shadowList);
         }
 
-        public void StoreRecipe(List<CommodityShadowConfirmed> list)
+        public void StoreRecipe(List<CommodityShadowConfirmed> list, RecipeCategory recipeCategory)
         {
             // Store it here
+            // Creating some recipies
+            string description = "";
+            foreach (var block in recipeDescription)
+            {
+                description += block + "\n";
+            }
+
+            Recipe recipe = _recipeModel.CreateRecipe(recipeName, description);
+
+
+            // Now we need to bind them together! We do need these objects :D
+            _rcModel.CreateRC(recipe, recipeCategory);
+
+            foreach (var commodityShadow in list)
+            {
+                Commodity commodity;
+                commodity = commodityShadow.ConfirmedCommodity
+                    ? commodityShadow.Commodity
+                    : _commodityModel.CreateCommodity(commodityShadow.Name);
+
+                _recipeCommodityModel.CreateRecipeCommodity(recipe, commodity, commodityShadow.Value,
+                    commodityShadow.ConfirmedUnit
+                        ? commodityShadow.Unit.ToString()
+                        : commodityShadow.UnitString);
+            }
+            MessageBox.Show("Opskriften er blevet gemt", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+            scrape.Close();
         }
 
         public class CommodityShadowConfirmed : CommodityShadow
@@ -127,18 +184,18 @@ namespace RecipeManager.Controllers
 
         private double StringToDouble(string input)
         {
-            Regex re = new Regex(@"^\s*(\d+)(\s*\.(\d*)|\s+(\d+)\s*/\s*(\d+))?\s*$");
-            string str = " 9  1/ 2 ";
-            Match m = re.Match(str);
-            double value = m.Groups[1].Success ? double.Parse(m.Groups[1].Value) : 0.0;
+            Regex re = new Regex(@"^([\d]*)(([.,]([\d]{1,3}))| ?([\d]{1,2})\/([\d]{1,3}))?$");
+//            string input = "1 1/2";
+            Match m = re.Match(input);
+            double value = (m.Groups[1].Length != 0) ? double.Parse(m.Groups[1].Value) : 0.0;
 
-            if (m.Groups[3].Success)
+            if (m.Groups[4].Length != 0)
             {
                 value += double.Parse("0." + m.Groups[3].Value);
             }
-            else
+            else if (m.Groups[5].Length != 0)
             {
-                value += double.Parse(m.Groups[4].Value) / double.Parse(m.Groups[5].Value);
+                value += double.Parse(m.Groups[5].Value) / double.Parse(m.Groups[6].Value);
             }
 
             return value;

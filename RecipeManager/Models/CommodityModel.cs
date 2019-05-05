@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace RecipeManager.Models
 {
-    class CommodiyModel
+    class CommodityModel
     {
         SqlConnection sqlConnection;
 
-        public CommodiyModel(SqlConnection sqlConnection)
+        public CommodityModel(SqlConnection sqlConnection)
         {
             this.sqlConnection = sqlConnection;
         }
@@ -51,7 +51,7 @@ namespace RecipeManager.Models
             }
             else
             {
-                sqlCommand = new SqlCommand($"SELECT * FROM Commodity WHERE Name='%{partialName}%'", sqlConnection);
+                sqlCommand = new SqlCommand($"SELECT * FROM Commodity WHERE Name LIKE '%{partialName}%'", sqlConnection);
             }
 
             SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();

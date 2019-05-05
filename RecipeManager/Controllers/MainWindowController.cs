@@ -55,7 +55,7 @@ namespace RecipeManager.Controllers
             // All Model are initialized
             CCCModel cccModel = new CCCModel(sqlConnection);
             CommodityCategoryModel commodityCategoryModel = new CommodityCategoryModel(sqlConnection);
-            CommodiyModel commodiytModel = new CommodiyModel(sqlConnection);
+            CommodityModel commodiytModel = new CommodityModel(sqlConnection);
             RCModel rcModel = new RCModel(sqlConnection);
             RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
             RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
@@ -76,7 +76,7 @@ namespace RecipeManager.Controllers
             // All Model are initialized
             CCCModel cccModel = new CCCModel(sqlConnection);
             CommodityCategoryModel commodityCategoryModel = new CommodityCategoryModel(sqlConnection);
-            CommodiyModel commodiytModel = new CommodiyModel(sqlConnection);
+            CommodityModel commodiytModel = new CommodityModel(sqlConnection);
             RCModel rcModel = new RCModel(sqlConnection);
             RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
             RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
