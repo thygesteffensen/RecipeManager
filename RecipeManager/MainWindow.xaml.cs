@@ -30,11 +30,12 @@ namespace RecipeManager
 
         private void RecipeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (RecipeListBox.SelectedItem != null)
-            {
-                TextBlockTitle.Text = (RecipeListBox.SelectedItem as Recipe).Name;
-                TextBoxRecipe.Text = (RecipeListBox.SelectedItem as Recipe).Description;
-            }
+            if (RecipeListBox.SelectedItem == null) return;
+
+            Recipe recipe = (Recipe) RecipeListBox.SelectedItem;
+            TextBlockTitle.Text = recipe.Name;
+            TextBoxRecipe.Text = recipe.Description;
+            CommodityListBox.ItemsSource = _controlMainWindowController.GetCommodities(recipe.Id);
         }
 
 
@@ -52,11 +53,7 @@ namespace RecipeManager
 
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)
         {
-            /*
-             * HENRIK Vil man gøre dette eller vil man oprette controlleren først
-             */
-            CreateRecipe createRecipe = new CreateRecipe(_controlMainWindowController.GetSqlConnection());
-            createRecipe.ShowDialog();
+            _controlMainWindowController.OpenCreateRecipeWindow();
             ReloadView();
         }
 
@@ -75,8 +72,7 @@ namespace RecipeManager
 
         private void ReloadView()
         {
-            List<RecipeCategory> list = _controlMainWindowController.GetCategories();
-            CategoryListBox.ItemsSource = list;
+            CategoryListBox.ItemsSource = _controlMainWindowController.GetCategories();
             RecipeListBox.ItemsSource = null;
             TextBlockTitle.Text = "";
             TextBoxRecipe.Text = "";

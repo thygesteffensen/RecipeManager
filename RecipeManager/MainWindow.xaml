@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Opskrift håndtertinssystem" Height="450" Width="800">
+        Title="Opskrift håndtertingssystem" Height="550" Width="1000">
 
 
     <DockPanel>
@@ -49,6 +49,17 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <TextBlock x:Name="TextBlockTitle" DockPanel.Dock="Top" FontSize="24" Margin="10,10,0,0" Height="32"/>
+        <ListBox x:Name="CommodityListBox" DockPanel.Dock="Left" Margin="10,10,0,10"  Width="200">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,2">
+                        <TextBlock Text="{Binding Value}" />
+                        <TextBlock Text="{Binding Unit}" />
+                        <TextBlock Text="{Binding Name}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
         <TextBox x:Name="TextBoxRecipe" Margin="10,10,10,10" VerticalAlignment="Stretch" TextWrapping="WrapWithOverflow" />
 
     </DockPanel>

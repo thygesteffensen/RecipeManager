@@ -16,28 +16,28 @@ namespace RecipeManager.Controllers
 {
     public class ScrapeController
     {
-        private Scrape scrape;
-        private SqlConnection sqlConnection;
-        private CommodityModel _commodityModel;
-        private RecipeModel _recipeModel;
-        private RCModel _rcModel;
-        private RecipeCommodityModel _recipeCommodityModel;
+        private readonly Scrape _scrape;
+        private readonly CommodityModel _commodityModel;
+        private readonly RecipeModel _recipeModel;
+        private readonly RCModel _rcModel;
+        private readonly RecipeCommodityModel _recipeCommodityModel;
 
-        string recipeName;
-        List<string> recipeDescription = new List<string>();
-        List<string> ingredietnsListlist = new List<string>();
+        private string _recipeName;
+        readonly List<string> _recipeDescription = new List<string>();
+        readonly List<string> _ingredientsList = new List<string>();
 
         public ScrapeController(SqlConnection sqlConnection)
         {
-            this.sqlConnection = sqlConnection;
             this._commodityModel = new CommodityModel(sqlConnection);
             this._recipeModel = new RecipeModel(sqlConnection);
             this._rcModel = new RCModel(sqlConnection);
             this._recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
 
-            scrape = new Scrape(sqlConnection, this);
-            scrape.SetContentCategoryDropdown(GetRecipeCategories());
-            scrape.ShowDialog();
+            RecipeCategoryController _recipeCategoryController = new RecipeCategoryController(sqlConnection);
+
+            _scrape = new Scrape(sqlConnection, this);
+            _scrape.SetContentCategoryDropdown(_recipeCategoryController.GetRecipeCategories());
+            _scrape.ShowDialog();
         }
 
         public List<Commodity> GetCommodities()
@@ -47,8 +47,6 @@ namespace RecipeManager.Controllers
 
         public void ScrapeWebsite(string url)
         {
-            string line = string.Empty;
-
             HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
 
             using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
@@ -60,6 +58,7 @@ namespace RecipeManager.Controllers
 
                 // Retrieving the important lines
                 List<string> lines = new List<string>();
+                string line;
                 while ((line = reader.ReadLine()) != null)
                 {
                     if (regexStart.IsMatch(line))
@@ -77,7 +76,6 @@ namespace RecipeManager.Controllers
 
                 RetrieveRecipe(lines);
                 VerifyIngredients();
-                Console.WriteLine("Done");
             }
         }
 
@@ -87,9 +85,8 @@ namespace RecipeManager.Controllers
 
             List<CommodityShadowConfirmed> shadowList = new List<CommodityShadowConfirmed>();
 
-            var length = ingredietnsListlist.Count;
-            var index = 0;
-            foreach (var ingredient in ingredietnsListlist)
+            var length = _ingredientsList.Count;
+            foreach (var ingredient in _ingredientsList)
             {
                 // Creating the shadow object
                 CommodityShadowConfirmed shadowObject = new CommodityShadowConfirmed();
@@ -139,20 +136,22 @@ namespace RecipeManager.Controllers
                 shadowList.Add(shadowObject);
             }
 
-            scrape.ConfirmIngredient(shadowList);
+            // Since this method is called from a async thread
+            _scrape.Dispatcher.Invoke(() =>
+            {
+                _scrape.ConfirmCommodities(shadowList);
+            });
         }
 
         public void StoreRecipe(List<CommodityShadowConfirmed> list, RecipeCategory recipeCategory)
         {
-            // Store it here
-            // Creating some recipies
             string description = "";
-            foreach (var block in recipeDescription)
+            foreach (var block in _recipeDescription)
             {
                 description += block + "\n";
             }
 
-            Recipe recipe = _recipeModel.CreateRecipe(recipeName, description);
+            Recipe recipe = _recipeModel.CreateRecipe(_recipeName, description);
 
 
             // Now we need to bind them together! We do need these objects :D
@@ -171,35 +170,9 @@ namespace RecipeManager.Controllers
                         : commodityShadow.UnitString);
             }
             MessageBox.Show("Opskriften er blevet gemt", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
-            scrape.Close();
+            _scrape.Close();
         }
 
-        public class CommodityShadowConfirmed : CommodityShadow
-        {
-            public bool ConfirmedUnit { get; set; }
-            public bool ConfirmedValue { get; set; }
-            public bool ConfirmedCommodity { get; set; }
-            public string UnitString { get; set; }
-        }
-
-        private double StringToDouble(string input)
-        {
-            Regex re = new Regex(@"^([\d]*)(([.,]([\d]{1,3}))| ?([\d]{1,2})\/([\d]{1,3}))?$");
-//            string input = "1 1/2";
-            Match m = re.Match(input);
-            double value = (m.Groups[1].Length != 0) ? double.Parse(m.Groups[1].Value) : 0.0;
-
-            if (m.Groups[4].Length != 0)
-            {
-                value += double.Parse("0." + m.Groups[3].Value);
-            }
-            else if (m.Groups[5].Length != 0)
-            {
-                value += double.Parse(m.Groups[5].Value) / double.Parse(m.Groups[6].Value);
-            }
-
-            return value;
-        }
 
         private void RetrieveRecipe(List<string> lines)
         {
@@ -220,7 +193,7 @@ namespace RecipeManager.Controllers
                 match = regexRecipeName.Match(line);
                 if (match.Success)
                 {
-                    recipeName = StripTagsRegex(match.ToString());
+                    _recipeName = StripHTMLTagsRegex(match.ToString());
                 }
 
                 // Retrieving the description
@@ -240,7 +213,7 @@ namespace RecipeManager.Controllers
                     var regexParagraf = new Regex("<p>(.*?)</p>");
                     foreach (Match itemMatch in regexParagraf.Matches(description))
                     {
-                        recipeDescription.Add(StripTagsRegex(itemMatch.ToString()));
+                        _recipeDescription.Add(StripHTMLTagsRegex(itemMatch.ToString()));
                     }
                 }
 
@@ -261,21 +234,52 @@ namespace RecipeManager.Controllers
                     var regexParagraf = new Regex("<li (.*?)>(.*?)</li>");
                     foreach (Match itemMatch in regexParagraf.Matches(ingredients))
                     {
-                        ingredietnsListlist.Add(StripTagsRegex(itemMatch.ToString()));
+                        _ingredientsList.Add(StripHTMLTagsRegex(itemMatch.ToString()));
                     }
                 }
             }
         }
 
-        public List<RecipeCategory> GetRecipeCategories()
-        {
-            RecipeCategoryController recipeCategoryController = new RecipeCategoryController(sqlConnection);
-            return recipeCategoryController.GetRecipeCategories();
-        }
-
-        public string StripTagsRegex(string source)
+        /// <summary>
+        /// Strips a string from HTML tags
+        /// </summary>
+        /// <param name="source">HTML string</param>
+        /// <returns>Striped string</returns>
+        private string StripHTMLTagsRegex(string source)
         {
             return Regex.Replace(source, "<.*?>", string.Empty);
         }
+
+        /// <summary>
+        /// Converts a given string to a double
+        /// </summary>
+        /// <param name="input">String</param>
+        /// <returns>Double</returns>
+        private double StringToDouble(string input)
+        {
+            Regex re = new Regex(@"^([\d]*)(([.,]([\d]{1,3}))| ?([\d]{1,2})\/([\d]{1,3}))?$");
+            Match m = re.Match(input);
+            double value = (m.Groups[1].Length != 0) ? double.Parse(m.Groups[1].Value) : 0.0;
+
+            if (m.Groups[4].Length != 0)
+            {
+                value += double.Parse("0." + m.Groups[3].Value);
+            }
+            else if (m.Groups[5].Length != 0)
+            {
+                value += double.Parse(m.Groups[5].Value) / double.Parse(m.Groups[6].Value);
+            }
+
+            return value;
+        }
+
+        public class CommodityShadowConfirmed : CommodityShadow
+        {
+            public bool ConfirmedUnit { get; set; }
+            public bool ConfirmedValue { get; set; }
+            public bool ConfirmedCommodity { get; set; }
+            public string UnitString { get; set; }
+        }
+
     }
 }

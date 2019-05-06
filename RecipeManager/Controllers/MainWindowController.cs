@@ -50,6 +50,11 @@ namespace RecipeManager.Controllers
             ScrapeController scrapeController = new ScrapeController(sqlConnection);
         }
 
+        public void OpenCreateRecipeWindow()
+        {
+            RecipeController recipeController = new RecipeController(sqlConnection);
+        }
+
         public void DeleteAllContent()
         {
             // All Model are initialized
@@ -68,6 +73,11 @@ namespace RecipeManager.Controllers
             recipeModel.DeleteRecipe();
             commodiytModel.DeleteCommodity();
             commodityCategoryModel.DeleteCommodityCategory();
+        }
+
+        public List<Commodity> GetCommodities(int recipeID)
+        {
+            return null;
         }
 
         public void PopulateDBDummyData()

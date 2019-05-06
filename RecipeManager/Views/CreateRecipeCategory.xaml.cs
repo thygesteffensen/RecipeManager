@@ -23,6 +23,7 @@ namespace RecipeManager.Views
         public CreateRecipeCategory(SqlConnection sqlConnection)
         {
             InitializeComponent();
+
             _recipeCategoryController = new RecipeCategoryController(sqlConnection);
             ListBoxRecipeCategories.ItemsSource = _recipeCategoryController.GetRecipeCategories();
         }

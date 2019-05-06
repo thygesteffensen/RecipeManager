@@ -22,14 +22,23 @@ namespace RecipeManager.Views
     /// </summary>
     public partial class Scrape : Window
     {
-        private ScrapeController scrapeController;
+        private readonly ScrapeController _scrapeController;
+        private readonly List<Commodity> _commodities; 
         public Scrape(SqlConnection sqlConnection, ScrapeController scrapeController)
         {
             InitializeComponent();
-            this.scrapeController = scrapeController;
+            this._scrapeController = scrapeController;
 
-            CommodityName.ItemsSource = scrapeController.GetCommodities();
+            _commodities = scrapeController.GetCommodities();
+
+            List<string> commodityNames = _commodities.Select(commodity => (string) commodity.Name).ToList();
+            CommodityName.ItemsSource = commodityNames;
+
+            /* Hidden objects which should not be seen yet */
+            ShowVerificationStep(false);
+            NotificationTextBlock.Visibility = Visibility.Hidden;
         }
+
 
         public void SetContentCategoryDropdown(List<RecipeCategory> list)
         {
@@ -37,22 +46,24 @@ namespace RecipeManager.Views
             RecipeCategoryDropdown.SelectedIndex = 0;
         }
 
-        private bool confirmeState = false;
-        private int listIndex = 0;
+        private int _listIndex = 0;
         private List<ScrapeController.CommodityShadowConfirmed> _shadowList;
-        public void ConfirmIngredient(List<ScrapeController.CommodityShadowConfirmed> shadowList)
+        public void ConfirmCommodities(List<ScrapeController.CommodityShadowConfirmed> shadowList)
         {
+           
+            ShowVerificationStep(true);
             this._shadowList = shadowList;
             PopulateConfirmFields();
         }
 
         public void PopulateConfirmFields()
         {
-            var temp = _shadowList[listIndex];
+            ConfirmButton.Content = $"Bekræft ({_listIndex+1}/{_shadowList.Count})";
+            var temp = _shadowList[_listIndex];
             if (temp.ConfirmedCommodity)
             {
                 NameGuess.Text = temp.Commodity.Name;
-                CommodityName.SelectedItem = temp.Commodity;
+                CommodityName.SelectedIndex = _commodities.FindIndex(a => a.Name.Contains(temp.Commodity.Name));
             }
             else
             {
@@ -75,55 +86,54 @@ namespace RecipeManager.Views
             ValueConfirmed.Text = temp.Value + "";
         }
 
-        public void ConfirmRecipe(object sender, RoutedEventArgs e)
+        public void ConfirmCommodity(object sender, RoutedEventArgs e)
         {
-            var temp = _shadowList[listIndex];
-            temp.Commodity = (Commodity) CommodityName.SelectedItem;
+            var temp = _shadowList[_listIndex];
+            temp.Commodity = CommodityName.SelectedIndex > 0 ? (Commodity)_commodities[CommodityName.SelectedIndex] : null;
             temp.Unit = (Units) ComboBoxUnit.SelectedItem;
             temp.Value = Convert.ToDouble(ValueConfirmed.Text);
-            listIndex++;
-            if (listIndex == _shadowList.Count)
+            _listIndex++;
+            if (_listIndex == _shadowList.Count)
             {
-                scrapeController.StoreRecipe(_shadowList,(RecipeCategory) RecipeCategoryDropdown.SelectedItem);
+                _scrapeController.StoreRecipe(_shadowList,(RecipeCategory) RecipeCategoryDropdown.SelectedItem);
                 return;
             }
             PopulateConfirmFields();
         }
 
 
-        private void ErrorDialog(string message)
+        private async void GetRecipeInitializeProcess(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(message, "Fejl", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-
-        public void Get(object sender, RoutedEventArgs e)
-        {
+            string url = URLInput.Text;
+            if (!url.Contains("valdemarsro"))
+            {
+                // This check is only due to lag of real dev
+                MessageBox.Show("Forkert URL, Vi understøtter kun opskrifter fra Valdemarso.dk", "Fejl",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             // Getting the view ready
-            LockFields(false);
+            RecipeCategoryDropdown.IsEnabled = false;
+            GetRecipeButton.IsEnabled = false;
+            URLInput.IsEnabled = false;
             NotificationTextBlock.Visibility = Visibility.Visible;
-            NotificationTextBlock.Text = "Henter opskrift, vent venligst";
             // Calling the controller
-            scrapeController.ScrapeWebsite(TextBox.Text);
+            await Task.Run(() => _scrapeController.ScrapeWebsite(url));
         }
 
 
-        private void HideVerificationStep(bool boolean)
+        private void ShowVerificationStep(bool boolean)
         {
-            if (boolean)
-            {
-                NotificationTextBlock.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                NotificationTextBlock.Visibility = Visibility.Visible;
-            }
-        }
-
-        public void LockFields(bool boolean)
-        {
-            RecipeCategoryDropdown.IsEnabled = boolean;
-            GetRecipeButton.IsEnabled = boolean;
-            TextBox.IsEnabled = boolean;
+            this.Height = boolean ? 270 : 200;
+            NotificationTextBlock.Text = boolean 
+                ? "Vi kunne ikke bestemme de følgende ingredienser, bekræft dem venligst" 
+                : "Henter opskrift, vent venligst";
+            AmountGuess.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
+            UnitGuess.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
+            NameGuess.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
+            ValueConfirmed.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
+            ComboBoxUnit.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
+            CommodityName.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
+            ConfirmButton.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
         }
     }
 }

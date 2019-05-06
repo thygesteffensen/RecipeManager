@@ -9,16 +9,16 @@ namespace RecipeManager.Models
 {
     class RecipeCommodityModel
     {
-        SqlConnection sqlConnection;
+        private readonly SqlConnection _sqlConnection;
         public RecipeCommodityModel(SqlConnection sqlConnection)
         {
-            this.sqlConnection = sqlConnection;
+            this._sqlConnection = sqlConnection;
         }
 
-        public RecipeCommodity GetRecipeCommodity(Recipe recipe, Commodity commodity)
+        public RecipeCommodity GetRecipeCommodity(Recipe recipe)
         {
-            SqlCommand sqlCommand = new SqlCommand($"SELECT (Value, Unit) FROM RecipeCommodity WHERE " +
-                $"RecipeID={commodity.Id} AND CommodityID={commodity.Id}", sqlConnection);
+            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCommodity WHERE " +
+                $"RecipeID={recipe.Id}", _sqlConnection);
 
             SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
             try
@@ -46,7 +46,7 @@ namespace RecipeManager.Models
         public void CreateRecipeCommodity(Recipe recipe, Commodity commodity, double Value, string Unit)
         {
             SqlCommand c = new SqlCommand("INSERT INTO RecipeCommodity (RecipeID, CommodityID, Value, Unit) " +
-                "VALUES(@RECIPEID, @COMMODITYID, @VALUE, @UNIT)", sqlConnection);
+                "VALUES(@RECIPEID, @COMMODITYID, @VALUE, @UNIT)", _sqlConnection);
             c.CommandTimeout = 15;
 
             c.Parameters.AddWithValue("@RECIPEID", recipe.Id);
@@ -59,7 +59,7 @@ namespace RecipeManager.Models
 
         public void DeleteRecipeCommodity()
         {
-            SqlCommand c = new SqlCommand("DELETE FROM RecipeCommodity", sqlConnection);
+            SqlCommand c = new SqlCommand("DELETE FROM RecipeCommodity", _sqlConnection);
             c.ExecuteNonQuery();
         }
     }

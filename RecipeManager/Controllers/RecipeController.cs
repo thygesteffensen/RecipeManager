@@ -5,42 +5,60 @@ using RecipeManager.Views;
 
 namespace RecipeManager.Controllers
 {
-    class RecipeController
+    public class RecipeController
     {
+        private readonly CreateRecipe _createRecipe;
+        private readonly SqlConnection _sqlConnection;
+
         private RecipeModel _recipeModel;
-        private RCModel _rcModel;
-        private RecipeCommodityModel _recipeCommodityModel;
         private CommodityModel _commodityModel;
 
         public RecipeController(SqlConnection sqlConnection)
         {
-            _recipeModel = new RecipeModel(sqlConnection);
-            _rcModel = new RCModel(sqlConnection);
-            _recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
-            _commodityModel = new CommodityModel(sqlConnection);
+            this._sqlConnection = sqlConnection;
+            this._createRecipe = new CreateRecipe(this);
+            _createRecipe.ShowDialog();
         }
 
         public void CreateRecipe(List<CommodityShadow> commodityList, string recipeName, string recipeDescription,
             RecipeCategory recipeCategory)
         {
+            RCModel rcModel = new RCModel(_sqlConnection);
+            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_sqlConnection);
+            RecipeModel recipeModel = new RecipeModel(_sqlConnection);
+            CommodityModel commodityModel = new CommodityModel(_sqlConnection);
+
+
             Recipe temp = _recipeModel.CreateRecipe(recipeName, recipeDescription);
-            _rcModel.CreateRC(temp, recipeCategory);
+            rcModel.CreateRC(temp, recipeCategory);
 
             // Now we need to handle the commodities...
             foreach (var commodityShadow in commodityList)
             {
                 if (commodityShadow.Commodity != null)
                 {
-                    _recipeCommodityModel.CreateRecipeCommodity(temp, commodityShadow.Commodity, commodityShadow.Value,
+                    recipeCommodityModel.CreateRecipeCommodity(temp, commodityShadow.Commodity, commodityShadow.Value,
                         commodityShadow.Unit.ToString());
                 }
                 else
                 {
                     Commodity commodity = _commodityModel.CreateCommodity(commodityShadow.Name);
-                    _recipeCommodityModel.CreateRecipeCommodity(temp, commodity, commodityShadow.Value,
+                    recipeCommodityModel.CreateRecipeCommodity(temp, commodity, commodityShadow.Value,
                         commodityShadow.Unit.ToString());
                 }
             }
+        }
+
+        public List<RecipeCategory> GetRecipeCategories()
+        {
+            RecipeCategoryModel recipeCategory = new RecipeCategoryModel(_sqlConnection);
+            return recipeCategory.GetRecipeCategories();
+        }
+
+        public List<Commodity> GetCommodities()
+        {
+            CommodityModel commodity = new CommodityModel(_sqlConnection);
+            return commodity.GetCommodities();
         }
     }
 }

@@ -23,26 +23,26 @@ namespace RecipeManager.Views
     /// </summary>
     public partial class CreateRecipe : Window
     {
-        private List<CommodityShadow> Commodities = new List<CommodityShadow>();
-        private RecipeController recipeController;
-        private RecipeCategoryController recipeCategoryController;
-        private CommodityModel commodityModel;
+        private readonly List<CommodityShadow> _commodities = new List<CommodityShadow>();
+        private readonly RecipeController _recipeController;
 
         public int Id { get; private set; }
 
-        public CreateRecipe(SqlConnection sqlConnection)
+        public CreateRecipe(RecipeController recipeController)
         {
+            this._recipeController = recipeController;
             InitializeComponent();
 
-            recipeController = new RecipeController(sqlConnection);
-            recipeCategoryController = new RecipeCategoryController(sqlConnection);
-            commodityModel = new CommodityModel(sqlConnection);
 
-            RecipeCategoryDropdown.ItemsSource = recipeCategoryController.GetRecipeCategories();
+            RecipeCategoryDropdown.ItemsSource = _recipeController.GetRecipeCategories();
             RecipeCategoryDropdown.SelectedIndex = 0;
             ComboBoxUnit.SelectedIndex = 0;
 
-            CommodityName.ItemsSource = commodityModel.GetCommodities();
+
+            List<Commodity> _commodities = _recipeController.GetCommodities();
+
+            List<string> commodityNames = _commodities.Select(commodity => (string)commodity.Name).ToList();
+            CommodityName.ItemsSource = commodityNames;
         }
 
         private void AddCommodity_Click(object sender, RoutedEventArgs e)
@@ -75,7 +75,7 @@ namespace RecipeManager.Views
             if (commodity != null)
             {
                 // Commodity could not be casted. therefore it must be a string...
-                Commodities.Add(new CommodityShadow
+                _commodities.Add(new CommodityShadow
                 {
                     Id = (int)1,
                     Commodity = commodity,
@@ -92,7 +92,7 @@ namespace RecipeManager.Views
                     ErrorDialog("Råvare navnet er ikke gyldigt.");
                     return;
                 }
-                Commodities.Add(new CommodityShadow
+                _commodities.Add(new CommodityShadow
                 {
                     Id = (int)1,
                     Name = name,
@@ -105,14 +105,14 @@ namespace RecipeManager.Views
             CommodityName.SelectedIndex = -1;
             CommodityName.Text = "";
 
-            ListBoxCommodities.ItemsSource = Commodities;
+            ListBoxCommodities.ItemsSource = _commodities;
             ListBoxCommodities.Items.Refresh();
         }
 
         private void RemoveCommodity_Click(object sender, RoutedEventArgs e)
         {
             // Removing from lsit
-            Commodities.Remove(GetCommodityFromCommodity(sender));
+            _commodities.Remove(GetCommodityFromCommodity(sender));
 
             // Refresing list
             ListBoxCommodities.Items.Refresh();
@@ -127,7 +127,7 @@ namespace RecipeManager.Views
             ComboBoxUnit.SelectedValue = commodityShadow.Unit;
 
             // Removing from liSt
-            Commodities.Remove(GetCommodityFromCommodity(sender));
+            _commodities.Remove(GetCommodityFromCommodity(sender));
 
             // Refreshing list
             ListBoxCommodities.Items.Refresh();
@@ -160,12 +160,12 @@ namespace RecipeManager.Views
                 return;
             }
 
-            if (Commodities.Count < 1)
+            if (_commodities.Count < 1)
             {
                 ErrorDialog("Du har ikke angivet nogen råvare til opskriften.");
                 return;
             }
-            recipeController.CreateRecipe(Commodities, recipeName, recipeDescription, recipeCategory);
+            _recipeController.CreateRecipe(_commodities, recipeName, recipeDescription, recipeCategory);
             this.Close();
         } 
 
@@ -182,7 +182,7 @@ namespace RecipeManager.Views
             int id = int.Parse(tag.ToString());
 
             // Getting Commodity list index
-            CommodityShadow commodityShadow= Commodities.Find(x => x.Id == id);
+            CommodityShadow commodityShadow= _commodities.Find(x => x.Id == id);
 
             return commodityShadow;
         }
