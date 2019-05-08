@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Transactions;
 using RecipeManager.Models;
 using RecipeManager.Views;
 
@@ -12,18 +13,12 @@ namespace RecipeManager.Controllers
         private readonly string _dbPath;
 
 
-        public RecipeController(string dbPath, Recipe recipe=null)
+        public RecipeController(string dbPath, string title, Recipe recipe = null)
         {
             this._dbPath = dbPath;
             this._createRecipe = new CreateRecipe(this, recipe);
+            _createRecipe.Title = title;
             _createRecipe.ShowDialog();
-
-            // If there is given is recipe, this hould be loaded
-//            if (recipe != null)
-//            {
-//                RCModel rcModel = new RCModel(dbPath);
-//                RecipeToCategory recipeToCategory = rcModel.GetCategory(recipe);
-//            }
         }
 
         public RecipeToCategory GetRecipeCategory(Recipe recipe)
@@ -32,30 +27,70 @@ namespace RecipeManager.Controllers
             return rcModel.GetCategory(recipe);
         }
 
+        /*
+         * This comment belongs to the functions CreateRecipe, UpdateRecipe, RecipeToDb
+         * ============================================================================
+         * The three functions could have been merged to one and the deleting block
+         * could be moved into the else block, when checking for null in recipe variable.
+         *
+         * I chose to have three functions, to make it more obvious for the maintainer,
+         * what the functions did and when they could/should be used.*
+         */
         public void CreateRecipe(List<CommodityShadow> commodityList, string recipeName, string recipeDescription,
             RecipeCategory recipeCategory)
+        {
+            RecipeToDb(commodityList, recipeName, recipeDescription, recipeCategory);
+        }
+
+        public void UpdateRecipe(List<CommodityShadow> commodityList, string recipeName, string recipeDescription,
+            RecipeCategory recipeCategory, Recipe recipe)
+        {
+            using (TransactionScope scope = new TransactionScope())
+            {
+                RCModel rcModel = new RCModel(_dbPath);
+                RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+                RecipeModel recipeModel = new RecipeModel(_dbPath);
+
+                // We do not want to delete the recipe, since this will change its place
+                // on the list, but we delete all the connections to other tuples!
+                rcModel.DeleteRC(recipe);
+
+                recipeCommodityModel.DeleteRecipeCommodities(recipe);
+
+                recipeModel.EditRecipe(recipe, recipeName, recipeDescription);
+
+                RecipeToDb(commodityList, recipeName, recipeDescription, recipeCategory, recipe);
+
+                scope.Complete();
+            }
+        }
+
+        private void RecipeToDb(List<CommodityShadow> commodityList, string recipeName, string recipeDescription,
+            RecipeCategory recipeCategory, Recipe recipe = null)
         {
             RCModel rcModel = new RCModel(_dbPath);
             RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
             RecipeModel recipeModel = new RecipeModel(_dbPath);
             CommodityModel commodityModel = new CommodityModel(_dbPath);
 
+            if (recipe == null)
+            {
+                recipe = recipeModel.CreateRecipe(recipeName, recipeDescription);
+            }
 
-            Recipe temp = recipeModel.CreateRecipe(recipeName, recipeDescription);
-            rcModel.CreateRC(temp, recipeCategory);
+            rcModel.CreateRC(recipe, recipeCategory);
 
-            // Now we need to handle the commodities...
             foreach (var commodityShadow in commodityList)
             {
                 if (commodityShadow.Commodity != null)
                 {
-                    recipeCommodityModel.CreateRecipeCommodity(temp, commodityShadow.Commodity, commodityShadow.Value,
+                    recipeCommodityModel.CreateRecipeCommodity(recipe, commodityShadow.Commodity, commodityShadow.Value,
                         commodityShadow.Unit.ToString());
                 }
                 else
                 {
                     Commodity commodity = commodityModel.CreateCommodity(commodityShadow.Name);
-                    recipeCommodityModel.CreateRecipeCommodity(temp, commodity, commodityShadow.Value,
+                    recipeCommodityModel.CreateRecipeCommodity(recipe, commodity, commodityShadow.Value,
                         commodityShadow.Unit.ToString());
                 }
             }
@@ -64,7 +99,7 @@ namespace RecipeManager.Controllers
         public List<CommodityShadow> GetCommoditiesFromRecipe(Recipe recipe)
         {
             RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
-            List<RecipeCommodity> list =  recipeCommodityModel.GetRecipeCommodity(recipe);
+            List<RecipeCommodity> list = recipeCommodityModel.GetRecipeCommodity(recipe);
 
             List<CommodityShadow> list_1 = new List<CommodityShadow>();
             foreach (RecipeCommodity recipeCommodity in list)
@@ -88,6 +123,7 @@ namespace RecipeManager.Controllers
                     Value = recipeCommodity.Value
                 });
             }
+
             return list_1;
         }
 

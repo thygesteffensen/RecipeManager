@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:RecipeManager.Views"
         xmlns:models="clr-namespace:RecipeManager.Models"
         mc:Ignorable="d"
-        ResizeMode="NoResize"
-        Title="Opret opskrift" Height="450" Width="650">
+        Height="900" Width="650">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -54,7 +53,10 @@
             </ComboBox>
             <Button Content="Tilføj" Grid.Row="0" Grid.Column="3" Margin="2,0,0,0" Click="AddCommodity_Click"/>
         </Grid>
-        <ListBox x:Name="ListBoxCommodities" Grid.Row="3" Grid.Column="1" Margin="0,0,0,5">
+        <!-- So the element which is positioned in the grid does not inherit the height specs 
+        for this grid place. So if it is not given in the element, here the ListBox, the scrollbar
+        will not appear on overflow. Come on...-->
+        <ListBox x:Name="ListBoxCommodities" Grid.Row="3" Grid.Column="1" Margin="0,0,0,5" MaxHeight="350">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -75,7 +77,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <Label Grid.Row="4">Beskrivelse:</Label>
-        <TextBox x:Name="Description" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" />
+        <TextBox x:Name="Description" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" Height="Auto"/>
         <Button Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,0,0" Click="SaveRecipe">Gem opskrift</Button>
     </Grid>
 </Window>

@@ -131,9 +131,14 @@ namespace RecipeManager.Models
             }
         }
 
-        public void EditRecipe(Recipe recipe)
+        public void EditRecipe(Recipe recipe, string recipeName, string recipeDescription)
         {
-
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand($@"UPDATE Recipe SET Name='{recipeName}', Description='{recipeDescription}' WHERE Id={recipe.Id}", sqlConnection);
+                c.ExecuteNonQuery();
+            }
         }
 
         public int getNextIDRecipes()

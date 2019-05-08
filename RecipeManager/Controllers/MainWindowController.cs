@@ -54,7 +54,19 @@ namespace RecipeManager.Controllers
 
         public bool EditRecipe(Recipe recipe)
         {
-            RecipeController recipeController = new RecipeController(_dbPath, recipe);
+            try
+            {
+                RecipeController recipeController = new RecipeController(_dbPath, $"Ændre {recipe.Name}", recipe);
+                return true;
+            }
+            catch (SqlException)
+            {
+                Console.WriteLine("Couldn't alter recipe...");
+            }
+            catch (TransactionException)
+            {
+                Console.WriteLine("Couldn't alter recipe...");
+            }
 
             return false;
         }
@@ -81,7 +93,7 @@ namespace RecipeManager.Controllers
 
         public void OpenCreateRecipeWindow()
         {
-            RecipeController recipeController = new RecipeController(_dbPath);
+            RecipeController recipeController = new RecipeController(_dbPath, "Opret opskrift");
         }
 
         public void DeleteAllContent()

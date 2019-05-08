@@ -15,8 +15,10 @@ namespace RecipeManager.Views
     /// </summary>
     public partial class CreateRecipe : Window
     {
-        private readonly List<CommodityShadow> _commodities = new List<CommodityShadow>();
+        private readonly List<CommodityShadow> _shawdowCommodities = new List<CommodityShadow>();
         private readonly RecipeController _recipeController;
+        private readonly bool _editState = false;
+        private readonly Recipe _editRecipe = null;
 
         public int Id { get; private set; }
 
@@ -31,31 +33,29 @@ namespace RecipeManager.Views
             ComboBoxUnit.SelectedIndex = 0;
 
 
-            List<Commodity> _commodities = _recipeController.GetCommodities();
+            List<Commodity> commodities = _recipeController.GetCommodities();
 
-            List<string> commodityNames = _commodities.Select(commodity => commodity.Name).ToList();
+            List<string> commodityNames = commodities.Select(commodity => commodity.Name).ToList();
             CommodityName.ItemsSource = commodityNames;
 
             if (recipe != null)
             {
+                _editState = true;
+                _editRecipe = recipe;
+                // Loading information from already existing commodity.
                 RecipeCategory recipeCategory = _recipeController.GetRecipeCategory(recipe).RecipeCategory;
                 RecipeCategoryDropdown.SelectedItem = recipeCategory;
 
+                _shawdowCommodities = _recipeController.GetCommoditiesFromRecipe(recipe);
 
-                ListBoxCommodities.ItemsSource = _recipeController.GetCommoditiesFromRecipe(recipe);
+                ListBoxCommodities.ItemsSource = _shawdowCommodities;
                 ListBoxCommodities.Items.Refresh();
 
                 Description.Text = recipe.Description;
                 RecipeName.Text = recipe.Name;
-
-                Console.WriteLine("With Recipe: " + _recipeController.GetRecipeCategory(recipe).RecipeCategory.Name);
             }
         }
 
-        private void AddCommodityToList()
-        {
-
-        }
 
         private void AddCommodity_Click(object sender, RoutedEventArgs e)
         {
@@ -87,7 +87,7 @@ namespace RecipeManager.Views
             if (commodity != null)
             {
                 // Commodity could not be casted. therefore it must be a string...
-                _commodities.Add(new CommodityShadow
+                _shawdowCommodities.Add(new CommodityShadow
                 {
                     Id = 1,
                     Commodity = commodity,
@@ -105,7 +105,7 @@ namespace RecipeManager.Views
                     return;
                 }
 
-                _commodities.Add(new CommodityShadow
+                _shawdowCommodities.Add(new CommodityShadow
                 {
                     Id = 1,
                     Name = name,
@@ -118,14 +118,14 @@ namespace RecipeManager.Views
             CommodityName.SelectedIndex = -1;
             CommodityName.Text = "";
 
-            ListBoxCommodities.ItemsSource = _commodities;
+            ListBoxCommodities.ItemsSource = _shawdowCommodities;
             ListBoxCommodities.Items.Refresh();
         }
 
         private void RemoveCommodity_Click(object sender, RoutedEventArgs e)
         {
             // Removing from lsit
-            _commodities.Remove(GetCommodityFromCommodity(sender));
+            _shawdowCommodities.Remove(GetCommodityFromCommodity(sender));
 
             // Refresing list
             ListBoxCommodities.Items.Refresh();
@@ -140,7 +140,7 @@ namespace RecipeManager.Views
             ComboBoxUnit.SelectedValue = commodityShadow.Unit;
 
             // Removing from liSt
-            _commodities.Remove(GetCommodityFromCommodity(sender));
+            _shawdowCommodities.Remove(GetCommodityFromCommodity(sender));
 
             // Refreshing list
             ListBoxCommodities.Items.Refresh();
@@ -173,13 +173,22 @@ namespace RecipeManager.Views
                 return;
             }
 
-            if (_commodities.Count < 1)
+            if (_shawdowCommodities.Count < 1)
             {
                 ErrorDialog("Du har ikke angivet nogen råvare til opskriften.");
                 return;
             }
 
-            _recipeController.CreateRecipe(_commodities, recipeName, recipeDescription, recipeCategory);
+            if (_editState)
+            {
+                _recipeController.UpdateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory,
+                    _editRecipe);
+            }
+            else
+            {
+                _recipeController.CreateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory);
+            }
+
             Close();
         }
 
@@ -196,7 +205,7 @@ namespace RecipeManager.Views
             int id = int.Parse(tag.ToString());
 
             // Getting Commodity list index
-            CommodityShadow commodityShadow = _commodities.Find(x => x.Id == id);
+            CommodityShadow commodityShadow = _shawdowCommodities.Find(x => x.Id == id);
 
             return commodityShadow;
         }
