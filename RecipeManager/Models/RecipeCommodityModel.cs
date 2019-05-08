@@ -15,26 +15,38 @@ namespace RecipeManager.Models
             this._sqlConnection = sqlConnection;
         }
 
-        public RecipeCommodity GetRecipeCommodity(Recipe recipe)
+        public List<RecipeCommodity> GetRecipeCommodity(Recipe recipe)
         {
+            CommodityModel commodityModel = new CommodityModel(_sqlConnection);
             SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCommodity WHERE " +
                 $"RecipeID={recipe.Id}", _sqlConnection);
 
             SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
             try
             {
-                if (sqlDataReader.Read())
+                List<RecipeCommodity> list = new List<RecipeCommodity>();
+
+                while (sqlDataReader.Read())
                 {
                     RecipeCommodity recipeCommodity = new RecipeCommodity
                     {
-                        recipe = recipe,
-                        commodity = commodity,
-                        Value = (int)sqlDataReader[0],
-                        Unit = (string)sqlDataReader[1]
+                        Recipe = recipe,
+                        CommodityId = (int)sqlDataReader[1],
+                        Value = (double)sqlDataReader[2],
+                        Unit = (string)sqlDataReader[3]
                     };
 
-                    return recipeCommodity;
+                    list.Add(recipeCommodity);
                 }
+                sqlDataReader.Close();
+
+                foreach (RecipeCommodity recipeCommodity in list)
+                {
+                    Commodity commodity = commodityModel.GetCommodity(recipeCommodity.CommodityId);
+                    recipeCommodity.Commodity = commodity;
+                }
+
+                return list;
             }
             finally
             {
@@ -66,8 +78,9 @@ namespace RecipeManager.Models
 
     public class RecipeCommodity
     {
-        public Recipe recipe { get; set; }
-        public Commodity commodity { get; set; }
+        public Recipe Recipe { get; set; }
+        public Commodity Commodity { get; set; }
+        public int CommodityId { get; set; }
         public double Value { get; set; }
         public string Unit { get; set; }
     }

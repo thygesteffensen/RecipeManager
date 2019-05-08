@@ -29,7 +29,6 @@ namespace RecipeManager.Models
                         Name = (string)sqlDataReader[1]
                     };
 
-                    Console.WriteLine(String.Format("{0}, {1}", sqlDataReader[0], sqlDataReader[1]));
                     return commodityCategory;
                 }
             }

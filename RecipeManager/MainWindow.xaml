@@ -53,9 +53,17 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
-                        <TextBlock Text="{Binding Value}" />
-                        <TextBlock Text="{Binding Unit}" />
-                        <TextBlock Text="{Binding Name}" />
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" Text="{Binding Value}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,5,0" Text="{Binding Unit}" />
+                        <TextBlock Grid.Row="0" Grid.Column="2" Margin="0,0,5,0" Text="{Binding Commodity.Name}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

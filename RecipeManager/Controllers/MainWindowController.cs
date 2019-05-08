@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using System.Data.SqlClient;
 using RecipeManager.Models;
 using RecipeManager.Views;
@@ -12,16 +14,16 @@ namespace RecipeManager.Controllers
 
         public MainWindowController()
         {
-            // TODO: Need to find a way to keep this part dynamic!
-            //string path = Path.Combine(Application.StartupPath, "RecipeMangerDatabase.mdf");
-            //string startupPath = Environment.CurrentDirectory;
-            //string path = startupPath + "\\RecipeMangerDatabase.mdf";
-            string path = "C:\\Users\\Thyge Steffensen\\Documents\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf";  // Desktop
-//            string path = "C:\\Users\\thyge\\source\\repos\\RecipeManager\\RecipeManager\\RecipeManagerDatabase.mdf"; // Laptop
-
-            //SqlConnection conn = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=" + path + ";");
-            sqlConnection = new SqlConnection("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"" + path +
-                                              "\";Integrated Security=True");
+            // Getting the string from the config
+            var path = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ToString();
+            // Determine the base directory
+            var currentDomain = AppDomain.CurrentDomain;
+            var basePath = currentDomain.BaseDirectory;
+            currentDomain.SetData("DataDirectory", basePath);
+            // Combining base dir with path
+            path = path.Replace("|DataDirectory|", basePath);
+            // Creating sql connection
+            sqlConnection = new SqlConnection(path);
             sqlConnection.Open();
         }
 
@@ -75,9 +77,10 @@ namespace RecipeManager.Controllers
             commodityCategoryModel.DeleteCommodityCategory();
         }
 
-        public List<Commodity> GetCommodities(int recipeID)
+        public List<RecipeCommodity> GetCommodities(Recipe recipe)
         {
-            return null;
+            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
+            return recipeCommodityModel.GetRecipeCommodity(recipe);
         }
 
         public void PopulateDBDummyData()

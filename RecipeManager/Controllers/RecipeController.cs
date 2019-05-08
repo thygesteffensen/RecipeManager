@@ -10,8 +10,6 @@ namespace RecipeManager.Controllers
         private readonly CreateRecipe _createRecipe;
         private readonly SqlConnection _sqlConnection;
 
-        private RecipeModel _recipeModel;
-        private CommodityModel _commodityModel;
 
         public RecipeController(SqlConnection sqlConnection)
         {
@@ -29,7 +27,7 @@ namespace RecipeManager.Controllers
             CommodityModel commodityModel = new CommodityModel(_sqlConnection);
 
 
-            Recipe temp = _recipeModel.CreateRecipe(recipeName, recipeDescription);
+            Recipe temp = recipeModel.CreateRecipe(recipeName, recipeDescription);
             rcModel.CreateRC(temp, recipeCategory);
 
             // Now we need to handle the commodities...
@@ -42,7 +40,7 @@ namespace RecipeManager.Controllers
                 }
                 else
                 {
-                    Commodity commodity = _commodityModel.CreateCommodity(commodityShadow.Name);
+                    Commodity commodity = commodityModel.CreateCommodity(commodityShadow.Name);
                     recipeCommodityModel.CreateRecipeCommodity(temp, commodity, commodityShadow.Value,
                         commodityShadow.Unit.ToString());
                 }

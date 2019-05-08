@@ -30,7 +30,6 @@ namespace RecipeManager.Models
                         Name = (string) sqlDataReader[1]
                     };
 
-                    Console.WriteLine($"{sqlDataReader[0]}, {sqlDataReader[1]}");
                     return commodity;
                 }
             }
@@ -66,7 +65,6 @@ namespace RecipeManager.Models
                         Name = (string) sqlDataReader[1]
                     };
 
-                    Console.WriteLine($"{sqlDataReader[0]}, {sqlDataReader[1]}");
                     commodities.Add(commodity);
                 }
 

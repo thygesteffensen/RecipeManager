@@ -35,7 +35,7 @@ namespace RecipeManager
             Recipe recipe = (Recipe) RecipeListBox.SelectedItem;
             TextBlockTitle.Text = recipe.Name;
             TextBoxRecipe.Text = recipe.Description;
-            CommodityListBox.ItemsSource = _controlMainWindowController.GetCommodities(recipe.Id);
+            CommodityListBox.ItemsSource = _controlMainWindowController.GetCommodities(recipe);
         }
 
 

@@ -9,43 +9,50 @@ using System.Data.SqlClient;
 
 namespace RecipeManager.Models
 {
-	class RecipeModel
-	{
+    class RecipeModel
+    {
         SqlConnection sqlConnection;
-		public RecipeModel(SqlConnection sqlConnection)
+        private string dbPath;
+
+        public RecipeModel(string dbPath)
         {
-            this.sqlConnection = sqlConnection;
+            this.dbPath = dbPath;
         }
 
         public Recipe GetRecipe(int ID)
         {
-            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Recipe WHERE Id={ID}", sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(dbPath))
             {
-                if (sqlDataReader.Read())
+                SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Recipe WHERE Id={ID}", sqlConnection);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                try
                 {
-                    Recipe recipe = new Recipe
+                    if (sqlDataReader.Read())
                     {
-                        Id = (int)sqlDataReader[0],
-                        Name = (string)sqlDataReader[1],
-                        Description = (string)sqlDataReader[2]
-                    };
+                        Recipe recipe = new Recipe
+                        {
+                            Id = (int) sqlDataReader[0],
+                            Name = (string) sqlDataReader[1],
+                            Description = (string) sqlDataReader[2]
+                        };
 
-                    return recipe;
+                        return recipe;
+                    }
                 }
+                finally
+                {
+                    sqlDataReader.Close();
+                }
+
+                return null;
             }
-            finally
-            {
-                sqlDataReader.Close();
-            }
-            return null;
         }
 
         public Recipe CreateRecipe(string Name, string Description)
         {
             int id = getNextIDRecipes();
-            SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name, Description) VALUES(@ID, @NAME, @DESCRIPTION)", sqlConnection);
+            SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name, Description) VALUES(@ID, @NAME, @DESCRIPTION)",
+                sqlConnection);
             c.CommandTimeout = 15;
             c.Parameters.AddWithValue("@ID", id);
             c.Parameters.AddWithValue("@NAME", Name);
@@ -56,31 +63,34 @@ namespace RecipeManager.Models
             return GetRecipe((id));
         }
 
-	    public List<Recipe> GetRecipes(RecipeCategory recipeCategory)
-	    {
-	        SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Recipe INNER JOIN RC ON Recipe.Id = RC.RecipeID WHERE RC.RecipeCategoryID = {recipeCategory.Id}", sqlConnection);
-	        SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-	        try
-	        {
-	            List<Recipe> recipes = new List<Recipe>();
-	            while (sqlDataReader.Read())
-	            {
-	                Recipe recipe = new Recipe
-	                {
-	                    Id = (int)sqlDataReader[0],
-	                    Name = (string)sqlDataReader[1],
-	                    Description = (string)sqlDataReader[2]
-	                };
+        public List<Recipe> GetRecipes(RecipeCategory recipeCategory)
+        {
+            SqlCommand sqlCommand =
+                new SqlCommand(
+                    $"SELECT * FROM Recipe INNER JOIN RC ON Recipe.Id = RC.RecipeID WHERE RC.RecipeCategoryID = {recipeCategory.Id}",
+                    sqlConnection);
+            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+            try
+            {
+                List<Recipe> recipes = new List<Recipe>();
+                while (sqlDataReader.Read())
+                {
+                    Recipe recipe = new Recipe
+                    {
+                        Id = (int) sqlDataReader[0],
+                        Name = (string) sqlDataReader[1],
+                        Description = (string) sqlDataReader[2]
+                    };
 
-	                recipes.Add(recipe);
-	            }
+                    recipes.Add(recipe);
+                }
 
-	            return recipes;
-	        }
-	        finally
-	        {
-	            sqlDataReader.Close();
-	        }
+                return recipes;
+            }
+            finally
+            {
+                sqlDataReader.Close();
+            }
         }
 
         public void DeleteRecipe()
@@ -99,13 +109,13 @@ namespace RecipeManager.Models
             }
             else
             {
-                return (int)c.ExecuteScalar() + 1;
+                return (int) c.ExecuteScalar() + 1;
             }
         }
     }
 
     public class Recipe
-    { 
+    {
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
