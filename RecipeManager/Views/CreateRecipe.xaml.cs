@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using RecipeManager.Controllers;
 using RecipeManager.Models;
 
@@ -28,9 +20,9 @@ namespace RecipeManager.Views
 
         public int Id { get; private set; }
 
-        public CreateRecipe(RecipeController recipeController)
+        public CreateRecipe(RecipeController recipeController, Recipe recipe)
         {
-            this._recipeController = recipeController;
+            _recipeController = recipeController;
             InitializeComponent();
 
 
@@ -41,8 +33,28 @@ namespace RecipeManager.Views
 
             List<Commodity> _commodities = _recipeController.GetCommodities();
 
-            List<string> commodityNames = _commodities.Select(commodity => (string)commodity.Name).ToList();
+            List<string> commodityNames = _commodities.Select(commodity => commodity.Name).ToList();
             CommodityName.ItemsSource = commodityNames;
+
+            if (recipe != null)
+            {
+                RecipeCategory recipeCategory = _recipeController.GetRecipeCategory(recipe).RecipeCategory;
+                RecipeCategoryDropdown.SelectedItem = recipeCategory;
+
+
+                ListBoxCommodities.ItemsSource = _recipeController.GetCommoditiesFromRecipe(recipe);
+                ListBoxCommodities.Items.Refresh();
+
+                Description.Text = recipe.Description;
+                RecipeName.Text = recipe.Name;
+
+                Console.WriteLine("With Recipe: " + _recipeController.GetRecipeCategory(recipe).RecipeCategory.Name);
+            }
+        }
+
+        private void AddCommodityToList()
+        {
+
         }
 
         private void AddCommodity_Click(object sender, RoutedEventArgs e)
@@ -77,27 +89,28 @@ namespace RecipeManager.Views
                 // Commodity could not be casted. therefore it must be a string...
                 _commodities.Add(new CommodityShadow
                 {
-                    Id = (int)1,
+                    Id = 1,
                     Commodity = commodity,
                     Name = commodity.Name,
                     Value = value,
-                    Unit = (Units)ComboBoxUnit.SelectionBoxItem
+                    Unit = (Units) ComboBoxUnit.SelectionBoxItem
                 });
             }
             else
             {
-                string name = (string)CommodityName.Text;
+                string name = CommodityName.Text;
                 if (name.Length < 1)
                 {
                     ErrorDialog("Råvare navnet er ikke gyldigt.");
                     return;
                 }
+
                 _commodities.Add(new CommodityShadow
                 {
-                    Id = (int)1,
+                    Id = 1,
                     Name = name,
                     Value = value,
-                    Unit = (Units)ComboBoxUnit.SelectionBoxItem
+                    Unit = (Units) ComboBoxUnit.SelectionBoxItem
                 });
             }
 
@@ -165,9 +178,10 @@ namespace RecipeManager.Views
                 ErrorDialog("Du har ikke angivet nogen råvare til opskriften.");
                 return;
             }
+
             _recipeController.CreateRecipe(_commodities, recipeName, recipeDescription, recipeCategory);
-            this.Close();
-        } 
+            Close();
+        }
 
         private void ErrorDialog(string message)
         {
@@ -182,7 +196,7 @@ namespace RecipeManager.Views
             int id = int.Parse(tag.ToString());
 
             // Getting Commodity list index
-            CommodityShadow commodityShadow= _commodities.Find(x => x.Id == id);
+            CommodityShadow commodityShadow = _commodities.Find(x => x.Id == id);
 
             return commodityShadow;
         }

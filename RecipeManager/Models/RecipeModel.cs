@@ -1,28 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RecipeManager;
 using System.Data.SqlClient;
+using System.Transactions;
+using System.Windows;
 
 namespace RecipeManager.Models
 {
     class RecipeModel
     {
-        SqlConnection sqlConnection;
-        private string dbPath;
+        private readonly string _dbPath;
 
         public RecipeModel(string dbPath)
         {
-            this.dbPath = dbPath;
+            this._dbPath = dbPath;
         }
 
         public Recipe GetRecipe(int ID)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(dbPath))
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
+                sqlConnection.Open();
                 SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Recipe WHERE Id={ID}", sqlConnection);
                 SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
                 try
@@ -50,66 +47,110 @@ namespace RecipeManager.Models
 
         public Recipe CreateRecipe(string Name, string Description)
         {
-            int id = getNextIDRecipes();
-            SqlCommand c = new SqlCommand("INSERT INTO Recipe (Id, Name, Description) VALUES(@ID, @NAME, @DESCRIPTION)",
-                sqlConnection);
-            c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@ID", id);
-            c.Parameters.AddWithValue("@NAME", Name);
-            c.Parameters.AddWithValue("@DESCRIPTION", Description);
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                int id = getNextIDRecipes();
+                SqlCommand c = new SqlCommand(
+                    "INSERT INTO Recipe (Id, Name, Description) VALUES(@ID, @NAME, @DESCRIPTION)",
+                    sqlConnection);
+                c.CommandTimeout = 15;
+                c.Parameters.AddWithValue("@ID", id);
+                c.Parameters.AddWithValue("@NAME", Name);
+                c.Parameters.AddWithValue("@DESCRIPTION", Description);
 
-            c.ExecuteNonQuery();
+                c.ExecuteNonQuery();
 
-            return GetRecipe((id));
+                return GetRecipe((id));
+            }
         }
 
         public List<Recipe> GetRecipes(RecipeCategory recipeCategory)
         {
-            SqlCommand sqlCommand =
-                new SqlCommand(
-                    $"SELECT * FROM Recipe INNER JOIN RC ON Recipe.Id = RC.RecipeID WHERE RC.RecipeCategoryID = {recipeCategory.Id}",
-                    sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                List<Recipe> recipes = new List<Recipe>();
-                while (sqlDataReader.Read())
+                sqlConnection.Open();
+                SqlCommand sqlCommand =
+                    new SqlCommand(
+                        $"SELECT * FROM Recipe INNER JOIN RC ON Recipe.Id = RC.RecipeID WHERE RC.RecipeCategoryID = {recipeCategory.Id}",
+                        sqlConnection);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                try
                 {
-                    Recipe recipe = new Recipe
+                    List<Recipe> recipes = new List<Recipe>();
+                    while (sqlDataReader.Read())
                     {
-                        Id = (int) sqlDataReader[0],
-                        Name = (string) sqlDataReader[1],
-                        Description = (string) sqlDataReader[2]
-                    };
+                        Recipe recipe = new Recipe
+                        {
+                            Id = (int) sqlDataReader[0],
+                            Name = (string) sqlDataReader[1],
+                            Description = (string) sqlDataReader[2]
+                        };
 
-                    recipes.Add(recipe);
+                        recipes.Add(recipe);
+                    }
+
+                    return recipes;
                 }
-
-                return recipes;
-            }
-            finally
-            {
-                sqlDataReader.Close();
+                finally
+                {
+                    sqlDataReader.Close();
+                }
             }
         }
 
-        public void DeleteRecipe()
+        public void DeleteRecipes()
         {
-            SqlCommand c = new SqlCommand("DELETE FROM Recipe", sqlConnection);
-            c.ExecuteNonQuery();
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("DELETE FROM Recipe", sqlConnection);
+                c.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteRecipe(Recipe recipe)
+        {
+            using (TransactionScope scope = new TransactionScope())
+            {
+                // Delete the recipes occurence in its category and its commodities
+                RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+                recipeCommodityModel.DeleteRecipeCommodities(recipe);
+
+                RCModel rcModel = new RCModel(_dbPath);
+                rcModel.DeleteRC(recipe);
+
+                using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+                {
+                    sqlConnection.Open();
+                    SqlCommand c = new SqlCommand($"DELETE FROM Recipe WHERE Id={recipe.Id}", sqlConnection);
+                    c.ExecuteNonQuery();
+                }
+
+                scope.Complete();
+            }
+        }
+
+        public void EditRecipe(Recipe recipe)
+        {
+
         }
 
         public int getNextIDRecipes()
         {
-            SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM Recipe", sqlConnection);
-            object obj = c.ExecuteScalar();
-            if (obj is System.DBNull)
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                return 1;
-            }
-            else
-            {
-                return (int) c.ExecuteScalar() + 1;
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM Recipe", sqlConnection);
+                object obj = c.ExecuteScalar();
+                if (obj is System.DBNull)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return (int) c.ExecuteScalar() + 1;
+                }
             }
         }
     }

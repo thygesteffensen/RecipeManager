@@ -1,64 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RecipeManager.Models
 {
     class CCCModel
     {
-        SqlConnection sqlConnection;
-        public CCCModel(SqlConnection sqlConnection)
+        private readonly string _dbPath;
+
+        public CCCModel(string dbPath)
         {
-            this.sqlConnection = sqlConnection;
+            this._dbPath = dbPath;
         }
 
         public List<CommodityToCategory> GetComodities(CommodityCategory commodityCategory)
         {
-            SqlCommand sqlCommand = new SqlCommand($"SELECT CommodityID FROM CCC WHERE " +
-                $"CommodityCategoryID={commodityCategory.Id}", sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                CommodityModel commodiytModel = new CommodityModel(sqlConnection);
-                List<CommodityToCategory> commodityToCategories = new List<CommodityToCategory>();
-
-                while (sqlDataReader.Read())
+                sqlConnection.Open();
+                SqlCommand sqlCommand = new SqlCommand($"SELECT CommodityID FROM CCC WHERE " +
+                                                       $"CommodityCategoryID={commodityCategory.Id}", sqlConnection);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                try
                 {
-                    CommodityToCategory commodityToCategory = new CommodityToCategory
+                    CommodityModel commodiytModel = new CommodityModel(_dbPath);
+                    List<CommodityToCategory> commodityToCategories = new List<CommodityToCategory>();
+
+                    while (sqlDataReader.Read())
                     {
-                        commodity = commodiytModel.GetCommodity((int)sqlDataReader[0]),
-                        commodityCategory = commodityCategory
-                    };
+                        CommodityToCategory commodityToCategory = new CommodityToCategory
+                        {
+                            commodity = commodiytModel.GetCommodity((int) sqlDataReader[0]),
+                            commodityCategory = commodityCategory
+                        };
 
-                    commodityToCategories.Add(commodityToCategory);
+                        commodityToCategories.Add(commodityToCategory);
+                    }
+
+                    return commodityToCategories;
                 }
-
-                return commodityToCategories;
-            }
-            finally
-            {
-                sqlDataReader.Close();
+                finally
+                {
+                    sqlDataReader.Close();
+                }
             }
         }
 
         public void CreateCCC(Commodity commodity, CommodityCategory commodityCategory)
         {
-            SqlCommand c = new SqlCommand("INSERT INTO CCC (CommodityID, CommodityCategoryID) " +
-                "VALUES(@COMMODITYID, @COMMODITYCATEGORYID)", sqlConnection);
-            c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@COMMODITYID", commodity.Id);
-            c.Parameters.AddWithValue("@COMMODITYCATEGORYID", commodityCategory.Id);
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("INSERT INTO CCC (CommodityID, CommodityCategoryID) " +
+                                              "VALUES(@COMMODITYID, @COMMODITYCATEGORYID)", sqlConnection);
+                c.CommandTimeout = 15;
+                c.Parameters.AddWithValue("@COMMODITYID", commodity.Id);
+                c.Parameters.AddWithValue("@COMMODITYCATEGORYID", commodityCategory.Id);
 
-            c.ExecuteNonQuery();
+                c.ExecuteNonQuery();
+            }
         }
 
         public void DeleteCCC()
         {
-            SqlCommand c = new SqlCommand("DELETE FROM CCC", sqlConnection);
-            c.ExecuteNonQuery();
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("DELETE FROM CCC", sqlConnection);
+                c.ExecuteNonQuery();
+            }
         }
     }
 
@@ -66,7 +75,6 @@ namespace RecipeManager.Models
     public class CommodityToCategory
     {
         public Commodity commodity { get; set; }
-        public CommodityCategory commodityCategory{ get; set; }
+        public CommodityCategory commodityCategory { get; set; }
     }
 }
-

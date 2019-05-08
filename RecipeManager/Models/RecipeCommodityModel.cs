@@ -1,78 +1,95 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RecipeManager.Models
 {
     class RecipeCommodityModel
     {
-        private readonly SqlConnection _sqlConnection;
-        public RecipeCommodityModel(SqlConnection sqlConnection)
+        private readonly string _dbPath;
+
+        public RecipeCommodityModel(string dbPath)
         {
-            this._sqlConnection = sqlConnection;
+            this._dbPath = dbPath;
         }
 
         public List<RecipeCommodity> GetRecipeCommodity(Recipe recipe)
         {
-            CommodityModel commodityModel = new CommodityModel(_sqlConnection);
-            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCommodity WHERE " +
-                $"RecipeID={recipe.Id}", _sqlConnection);
+            List<RecipeCommodity> list = new List<RecipeCommodity>();
 
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                List<RecipeCommodity> list = new List<RecipeCommodity>();
-
-                while (sqlDataReader.Read())
+                sqlConnection.Open();
+                SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCommodity WHERE " +
+                                                       $"RecipeID={recipe.Id}", sqlConnection);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                try
                 {
-                    RecipeCommodity recipeCommodity = new RecipeCommodity
+                    while (sqlDataReader.Read())
                     {
-                        Recipe = recipe,
-                        CommodityId = (int)sqlDataReader[1],
-                        Value = (double)sqlDataReader[2],
-                        Unit = (string)sqlDataReader[3]
-                    };
+                        RecipeCommodity recipeCommodity = new RecipeCommodity
+                        {
+                            Recipe = recipe,
+                            CommodityId = (int) sqlDataReader[1],
+                            Value = (double) sqlDataReader[2],
+                            Unit = (string) sqlDataReader[3]
+                        };
 
-                    list.Add(recipeCommodity);
+                        list.Add(recipeCommodity);
+                    }
                 }
-                sqlDataReader.Close();
-
-                foreach (RecipeCommodity recipeCommodity in list)
+                finally
                 {
-                    Commodity commodity = commodityModel.GetCommodity(recipeCommodity.CommodityId);
-                    recipeCommodity.Commodity = commodity;
+                    sqlDataReader.Close();
                 }
+            }
 
-                return list;
-            }
-            finally
+            CommodityModel commodityModel = new CommodityModel(_dbPath);
+
+            foreach (RecipeCommodity recipeCommodity in list)
             {
-                sqlDataReader.Close();
+                Commodity commodity = commodityModel.GetCommodity(recipeCommodity.CommodityId);
+                recipeCommodity.Commodity = commodity;
             }
-            return null;
+
+            return list;
         }
 
         public void CreateRecipeCommodity(Recipe recipe, Commodity commodity, double Value, string Unit)
         {
-            SqlCommand c = new SqlCommand("INSERT INTO RecipeCommodity (RecipeID, CommodityID, Value, Unit) " +
-                "VALUES(@RECIPEID, @COMMODITYID, @VALUE, @UNIT)", _sqlConnection);
-            c.CommandTimeout = 15;
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("INSERT INTO RecipeCommodity (RecipeID, CommodityID, Value, Unit) " +
+                                              "VALUES(@RECIPEID, @COMMODITYID, @VALUE, @UNIT)", sqlConnection);
+                c.CommandTimeout = 15;
 
-            c.Parameters.AddWithValue("@RECIPEID", recipe.Id);
-            c.Parameters.AddWithValue("@COMMODITYID", commodity.Id);
-            c.Parameters.AddWithValue("@VALUE", Value);
-            c.Parameters.AddWithValue("@UNIT", Unit);
+                c.Parameters.AddWithValue("@RECIPEID", recipe.Id);
+                c.Parameters.AddWithValue("@COMMODITYID", commodity.Id);
+                c.Parameters.AddWithValue("@VALUE", Value);
+                c.Parameters.AddWithValue("@UNIT", Unit);
 
-            c.ExecuteNonQuery();
+                c.ExecuteNonQuery();
+            }
         }
 
-        public void DeleteRecipeCommodity()
+        public void DeleteAllRecipeCommodities()
         {
-            SqlCommand c = new SqlCommand("DELETE FROM RecipeCommodity", _sqlConnection);
-            c.ExecuteNonQuery();
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("DELETE FROM RecipeCommodity", sqlConnection);
+                c.ExecuteNonQuery();
+            }
+        }
+
+        public void DeleteRecipeCommodities(Recipe recipe)
+        {
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand($"DELETE FROM RecipeCommodity WHERE RecipeID={recipe.Id}", sqlConnection);
+                c.ExecuteNonQuery();
+            }
         }
     }
 
@@ -85,6 +102,14 @@ namespace RecipeManager.Models
         public string Unit { get; set; }
     }
 
-    public enum Units { kg, g, dl, L, stk, tsk, spsk };
+    public enum Units
+    {
+        kg,
+        g,
+        dl,
+        L,
+        stk,
+        tsk,
+        spsk
+    };
 }
-

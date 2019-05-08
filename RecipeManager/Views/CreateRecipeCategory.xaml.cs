@@ -20,11 +20,11 @@ namespace RecipeManager.Views
     public partial class CreateRecipeCategory : Window
     {
         private readonly RecipeCategoryController _recipeCategoryController;
-        public CreateRecipeCategory(SqlConnection sqlConnection)
+        public CreateRecipeCategory(string dbPath)
         {
             InitializeComponent();
 
-            _recipeCategoryController = new RecipeCategoryController(sqlConnection);
+            _recipeCategoryController = new RecipeCategoryController(dbPath);
             ListBoxRecipeCategories.ItemsSource = _recipeCategoryController.GetRecipeCategories();
         }
 

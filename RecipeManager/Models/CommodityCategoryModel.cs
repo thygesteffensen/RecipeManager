@@ -1,71 +1,85 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SqlClient;
 
 namespace RecipeManager.Models
 {
     class CommodityCategoryModel
     {
-        SqlConnection sqlConnection;
-        public CommodityCategoryModel(SqlConnection sqlConnection)
+        private readonly string _dbPath;
+
+        public CommodityCategoryModel(string dbPath)
         {
-            this.sqlConnection = sqlConnection;
+            this._dbPath = dbPath;
         }
 
         public CommodityCategory GetCommodityCategory(int ID)
         {
-            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM CommodityCategory WHERE Id={ID}", sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                if (sqlDataReader.Read())
+                sqlConnection.Open();
+                SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM CommodityCategory WHERE Id={ID}", sqlConnection);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                try
                 {
-                    CommodityCategory commodityCategory = new CommodityCategory
+                    if (sqlDataReader.Read())
                     {
-                        Id = (int)sqlDataReader[0],
-                        Name = (string)sqlDataReader[1]
-                    };
+                        CommodityCategory commodityCategory = new CommodityCategory
+                        {
+                            Id = (int) sqlDataReader[0],
+                            Name = (string) sqlDataReader[1]
+                        };
 
-                    return commodityCategory;
+                        return commodityCategory;
+                    }
                 }
+                finally
+                {
+                    sqlDataReader.Close();
+                }
+
+                return null;
             }
-            finally
-            {
-                sqlDataReader.Close();
-            }
-            return null;
         }
 
         public void CreateCommodityCategory(string Name)
         {
-            SqlCommand c = new SqlCommand("INSERT INTO CommodityCategory (Id, Name) VALUES(@ID, @NAME)", sqlConnection);
-            c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@ID", getNextIDCommodityCategories() + 1);
-            c.Parameters.AddWithValue("@NAME", Name);
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("INSERT INTO CommodityCategory (Id, Name) VALUES(@ID, @NAME)",
+                    sqlConnection);
+                c.CommandTimeout = 15;
+                c.Parameters.AddWithValue("@ID", getNextIDCommodityCategories() + 1);
+                c.Parameters.AddWithValue("@NAME", Name);
 
-            c.ExecuteNonQuery();
+                c.ExecuteNonQuery();
+            }
         }
 
         public void DeleteCommodityCategory()
         {
-            SqlCommand c = new SqlCommand("DELETE FROM CommodityCategory", sqlConnection);
-            c.ExecuteNonQuery();
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("DELETE FROM CommodityCategory", sqlConnection);
+                c.ExecuteNonQuery();
+            }
         }
 
         public int getNextIDCommodityCategories()
         {
-            SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM CommodityCategory", sqlConnection);
-            object obj = c.ExecuteScalar();
-            if (obj == null)
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                return 1;
-            }
-            else
-            {
-                return (int)c.ExecuteScalar() + 1;
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM CommodityCategory", sqlConnection);
+                object obj = c.ExecuteScalar();
+                if (obj == null)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return (int) c.ExecuteScalar() + 1;
+                }
             }
         }
     }

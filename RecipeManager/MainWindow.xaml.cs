@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using RecipeManager.Controllers;
 using RecipeManager.Models;
-using RecipeManager.Views;
 
 namespace RecipeManager
 {
@@ -38,6 +36,46 @@ namespace RecipeManager
             CommodityListBox.ItemsSource = _controlMainWindowController.GetCommodities(recipe);
         }
 
+        private void DeleteRecipe(object sender, RoutedEventArgs e)
+        {
+            Recipe recipe = (Recipe)RecipeListBox.SelectedItem;
+            if (MessageBox.Show($"Slet {recipe.Name}", "Er du sikker?", MessageBoxButton.YesNo,
+                    MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
+            {
+                if (_controlMainWindowController.DeleteRecipe(recipe))
+                {
+                    MessageBox.Show($"{recipe.Name} er blevet fjernet!", "Succes", MessageBoxButton.OK,
+                        MessageBoxImage.None);
+                }
+                else
+                {
+                    MessageBox.Show($"Kunne ikke slette {recipe.Name}", "Fejl", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+            }
+            ReloadView();
+        }
+
+        private void EditRecipe(object sender, RoutedEventArgs e)
+        {
+            Recipe recipe = (Recipe)RecipeListBox.SelectedItem;
+//            if (MessageBox.Show($"Slet {recipe.Name}", "Er du sikker?", MessageBoxButton.YesNo,
+//                    MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
+//            {
+                if (_controlMainWindowController.EditRecipe(recipe))
+                {
+                    MessageBox.Show($"{recipe.Name} er blevet fjernet!", "Succes", MessageBoxButton.OK,
+                        MessageBoxImage.None);
+                }
+                else
+                {
+                    MessageBox.Show($"Kunne ikke slette {recipe.Name}", "Fejl", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
+                }
+//            }
+            ReloadView();
+        }
+
 
         private void LoadDummyData_Click(object sender, RoutedEventArgs e)
         {
@@ -65,8 +103,7 @@ namespace RecipeManager
 
         private void OpenCreateRecipeCategory(object sender, RoutedEventArgs e)
         {
-            CreateRecipeCategory createRecipeCategory = new CreateRecipeCategory(_controlMainWindowController.GetSqlConnection());
-            createRecipeCategory.ShowDialog();
+            _controlMainWindowController.OpenCreateRecipeCategoryWindow();
             ReloadView();
         }
 

@@ -1,100 +1,119 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RecipeManager.Models
 {
     class RecipeCategoryModel
     {
-        SqlConnection sqlConnection;
-        public RecipeCategoryModel(SqlConnection sqlConnection)
+        private readonly string _dbPath;
+
+        public RecipeCategoryModel(string dbPath)
         {
-            this.sqlConnection = sqlConnection;
+            this._dbPath = dbPath;
         }
 
         public RecipeCategory GetRecipeCategory(int ID)
         {
-            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCategory WHERE Id={ID}", sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                if (sqlDataReader.Read())
+                sqlConnection.Open();
+                SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCategory WHERE Id={ID}", sqlConnection);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                try
                 {
-                    RecipeCategory recipeCategory = new RecipeCategory
+                    if (sqlDataReader.Read())
                     {
-                        Id = (int)sqlDataReader[0],
-                        Name = (string)sqlDataReader[1]
-                    };
+                        RecipeCategory recipeCategory = new RecipeCategory
+                        {
+                            Id = (int) sqlDataReader[0],
+                            Name = (string) sqlDataReader[1]
+                        };
 
-                    return recipeCategory;
+                        return recipeCategory;
+                    }
                 }
+                finally
+                {
+                    sqlDataReader.Close();
+                }
+
+                return null;
             }
-            finally
-            {
-                sqlDataReader.Close();
-            }
-            return null;
         }
 
         public List<RecipeCategory> GetRecipeCategories()
         {
-            SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCategory", sqlConnection);
-            SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-            try
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                List<RecipeCategory> recipeCategories = new List<RecipeCategory>();
-                while (sqlDataReader.Read())
+                sqlConnection.Open();
+                SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCategory", sqlConnection);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                try
                 {
-                    RecipeCategory recipeCategory = new RecipeCategory
+                    List<RecipeCategory> recipeCategories = new List<RecipeCategory>();
+                    while (sqlDataReader.Read())
                     {
-                        Id = (int)sqlDataReader[0],
-                        Name = (string)sqlDataReader[1]
-                    };
-                    
-                    recipeCategories.Add(recipeCategory);
-                }
+                        RecipeCategory recipeCategory = new RecipeCategory
+                        {
+                            Id = (int) sqlDataReader[0],
+                            Name = (string) sqlDataReader[1]
+                        };
 
-                return recipeCategories;
-            }
-            finally
-            {
-                sqlDataReader.Close();
+                        recipeCategories.Add(recipeCategory);
+                    }
+
+                    return recipeCategories;
+                }
+                finally
+                {
+                    sqlDataReader.Close();
+                }
             }
         }
 
         public RecipeCategory CreateRecipeCategory(string Name)
         {
-            int id = GetNextIdRecipeCategory();
-            SqlCommand c = new SqlCommand("INSERT INTO RecipeCategory (Id, Name) VALUES(@ID, @NAME)", sqlConnection);
-            c.CommandTimeout = 15;
-            c.Parameters.AddWithValue("@ID", id);
-            c.Parameters.AddWithValue("@NAME", Name);
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                int id = GetNextIdRecipeCategory();
+                SqlCommand c = new SqlCommand("INSERT INTO RecipeCategory (Id, Name) VALUES(@ID, @NAME)",
+                    sqlConnection);
+                c.CommandTimeout = 15;
+                c.Parameters.AddWithValue("@ID", id);
+                c.Parameters.AddWithValue("@NAME", Name);
 
-            c.ExecuteNonQuery();
-            return GetRecipeCategory(id);
+                c.ExecuteNonQuery();
+                return GetRecipeCategory(id);
+            }
         }
 
         public void DeleteRecipeCategory()
         {
-            SqlCommand c = new SqlCommand("DELETE FROM RecipeCategory", sqlConnection);
-            c.ExecuteNonQuery();
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            {
+                sqlConnection.Open();
+                SqlCommand c = new SqlCommand("DELETE FROM RecipeCategory", sqlConnection);
+                c.ExecuteNonQuery();
+            }
         }
 
         public int GetNextIdRecipeCategory()
         {
-            /* This query will return null, if the table is empty! */
-            SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM RecipeCategory", sqlConnection);
-            object obj = c.ExecuteScalar();
-            if (obj is System.DBNull)
+            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {
-                return 1;
-            }
-            else
-            {
-                return (int)c.ExecuteScalar() + 1;
+                sqlConnection.Open();
+                /* This query will return null, if the table is empty! */
+                SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM RecipeCategory", sqlConnection);
+                object obj = c.ExecuteScalar();
+                if (obj is System.DBNull)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return (int) c.ExecuteScalar() + 1;
+                }
             }
         }
     }

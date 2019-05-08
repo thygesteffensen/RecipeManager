@@ -43,7 +43,14 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
-                        <TextBlock Text="{Binding Name}" />
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Ændre" Click="EditRecipe"/>
+                                <MenuItem Header="Slet" Click="DeleteRecipe"/>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+<!--                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" />-->
+                        <Label Content="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0"/>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

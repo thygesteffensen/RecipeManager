@@ -12,9 +12,9 @@ namespace RecipeManager.Controllers
     {
         private readonly RecipeCategoryModel _recipeCategoryModel;
 
-        public RecipeCategoryController(SqlConnection sqlConnection)
+        public RecipeCategoryController(string dbPath)
         {
-            _recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
+            _recipeCategoryModel = new RecipeCategoryModel(dbPath);
         }
 
         public List<RecipeCategory> GetRecipeCategories()

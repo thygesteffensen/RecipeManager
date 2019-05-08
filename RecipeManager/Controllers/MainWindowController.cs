@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
+using System.Transactions;
 using RecipeManager.Models;
 using RecipeManager.Views;
 
@@ -10,7 +11,7 @@ namespace RecipeManager.Controllers
 {
     class MainWindowController
     {
-        SqlConnection sqlConnection; // A connection which is used by all interactions with the DB.
+        private readonly string _dbPath;// A connection which is used by all interactions with the DB.
 
         public MainWindowController()
         {
@@ -21,20 +22,46 @@ namespace RecipeManager.Controllers
             var basePath = currentDomain.BaseDirectory;
             currentDomain.SetData("DataDirectory", basePath);
             // Combining base dir with path
-            path = path.Replace("|DataDirectory|", basePath);
+            _dbPath = path.Replace("|DataDirectory|", basePath);
             // Creating sql connection
-            sqlConnection = new SqlConnection(path);
-            sqlConnection.Open();
         }
 
-        public SqlConnection GetSqlConnection()
+        public void OpenCreateRecipeCategoryWindow()
         {
-            return sqlConnection;
+            CreateRecipeCategory createRecipeCategory = new CreateRecipeCategory(_dbPath);
+            createRecipeCategory.ShowDialog();
+        }
+
+        public bool DeleteRecipe(Recipe recipe)
+        {
+            try
+            {
+                RecipeModel recipeModel = new RecipeModel(_dbPath);
+                recipeModel.DeleteRecipe(recipe);
+                return true;
+            }
+            catch (SqlException)
+            {
+                Console.WriteLine("Couldn't delete recipe...");
+            }
+            catch (TransactionException)
+            {
+                Console.WriteLine("Couldn't delete recipe...");
+            }
+
+            return false;
+        }
+
+        public bool EditRecipe(Recipe recipe)
+        {
+            RecipeController recipeController = new RecipeController(_dbPath, recipe);
+
+            return false;
         }
 
         public List<RecipeCategory> GetCategories()
         {
-            RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
+            RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(_dbPath);
 
 
             return recipeCategoryModel.GetRecipeCategories();
@@ -42,44 +69,44 @@ namespace RecipeManager.Controllers
 
         public List<Recipe> GetRecipes(RecipeCategory recipeCategory)
         {
-            RecipeModel recipeModel = new RecipeModel(sqlConnection);
+            RecipeModel recipeModel = new RecipeModel(_dbPath);
 
             return recipeModel.GetRecipes(recipeCategory);
         }
 
         public void OpenScrapeLink()
         {
-            ScrapeController scrapeController = new ScrapeController(sqlConnection);
+            ScrapeController scrapeController = new ScrapeController(_dbPath);
         }
 
         public void OpenCreateRecipeWindow()
         {
-            RecipeController recipeController = new RecipeController(sqlConnection);
+            RecipeController recipeController = new RecipeController(_dbPath);
         }
 
         public void DeleteAllContent()
         {
             // All Model are initialized
-            CCCModel cccModel = new CCCModel(sqlConnection);
-            CommodityCategoryModel commodityCategoryModel = new CommodityCategoryModel(sqlConnection);
-            CommodityModel commodiytModel = new CommodityModel(sqlConnection);
-            RCModel rcModel = new RCModel(sqlConnection);
-            RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
-            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
-            RecipeModel recipeModel = new RecipeModel(sqlConnection);
+            CCCModel cccModel = new CCCModel(_dbPath);
+            CommodityCategoryModel commodityCategoryModel = new CommodityCategoryModel(_dbPath);
+            CommodityModel commodiytModel = new CommodityModel(_dbPath);
+            RCModel rcModel = new RCModel(_dbPath);
+            RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(_dbPath);
+            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+            RecipeModel recipeModel = new RecipeModel(_dbPath);
             // All data is wiped
-            rcModel.DeleteRC();
+            rcModel.DeleteAllRC();
             cccModel.DeleteCCC();
-            recipeCommodityModel.DeleteRecipeCommodity();
+            recipeCommodityModel.DeleteAllRecipeCommodities();
             recipeCategoryModel.DeleteRecipeCategory();
-            recipeModel.DeleteRecipe();
+            recipeModel.DeleteRecipes();
             commodiytModel.DeleteCommodity();
             commodityCategoryModel.DeleteCommodityCategory();
         }
 
         public List<RecipeCommodity> GetCommodities(Recipe recipe)
         {
-            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
+            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
             return recipeCommodityModel.GetRecipeCommodity(recipe);
         }
 
@@ -87,13 +114,13 @@ namespace RecipeManager.Controllers
         {
             DeleteAllContent();
             // All Model are initialized
-            CCCModel cccModel = new CCCModel(sqlConnection);
-            CommodityCategoryModel commodityCategoryModel = new CommodityCategoryModel(sqlConnection);
-            CommodityModel commodiytModel = new CommodityModel(sqlConnection);
-            RCModel rcModel = new RCModel(sqlConnection);
-            RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(sqlConnection);
-            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
-            RecipeModel recipeModel = new RecipeModel(sqlConnection);
+            CCCModel cccModel = new CCCModel(_dbPath);
+            CommodityCategoryModel commodityCategoryModel = new CommodityCategoryModel(_dbPath);
+            CommodityModel commodiytModel = new CommodityModel(_dbPath);
+            RCModel rcModel = new RCModel(_dbPath);
+            RecipeCategoryModel recipeCategoryModel = new RecipeCategoryModel(_dbPath);
+            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+            RecipeModel recipeModel = new RecipeModel(_dbPath);
             // Add some cool recipes yes.
 
             // Creating Categories

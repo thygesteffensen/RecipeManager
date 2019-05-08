@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using RecipeManager.Models;
 using RecipeManager.Views;
@@ -26,16 +22,16 @@ namespace RecipeManager.Controllers
         readonly List<string> _recipeDescription = new List<string>();
         readonly List<string> _ingredientsList = new List<string>();
 
-        public ScrapeController(SqlConnection sqlConnection)
+        public ScrapeController(string dbPath)
         {
-            this._commodityModel = new CommodityModel(sqlConnection);
-            this._recipeModel = new RecipeModel(sqlConnection);
-            this._rcModel = new RCModel(sqlConnection);
-            this._recipeCommodityModel = new RecipeCommodityModel(sqlConnection);
+            this._commodityModel = new CommodityModel(dbPath);
+            this._recipeModel = new RecipeModel(dbPath);
+            this._rcModel = new RCModel(dbPath);
+            this._recipeCommodityModel = new RecipeCommodityModel(dbPath);
 
-            RecipeCategoryController _recipeCategoryController = new RecipeCategoryController(sqlConnection);
+            RecipeCategoryController _recipeCategoryController = new RecipeCategoryController(dbPath);
 
-            _scrape = new Scrape(sqlConnection, this);
+            _scrape = new Scrape(this);
             _scrape.SetContentCategoryDropdown(_recipeCategoryController.GetRecipeCategories());
             _scrape.ShowDialog();
         }

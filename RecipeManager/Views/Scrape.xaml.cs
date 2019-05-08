@@ -1,17 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using RecipeManager.Controllers;
 using RecipeManager.Models;
 
@@ -24,7 +15,7 @@ namespace RecipeManager.Views
     {
         private readonly ScrapeController _scrapeController;
         private readonly List<Commodity> _commodities; 
-        public Scrape(SqlConnection sqlConnection, ScrapeController scrapeController)
+        public Scrape(ScrapeController scrapeController)
         {
             InitializeComponent();
             this._scrapeController = scrapeController;
@@ -89,7 +80,7 @@ namespace RecipeManager.Views
         public void ConfirmCommodity(object sender, RoutedEventArgs e)
         {
             var temp = _shadowList[_listIndex];
-            temp.Commodity = CommodityName.SelectedIndex > 0 ? (Commodity)_commodities[CommodityName.SelectedIndex] : null;
+            temp.Commodity = CommodityName.SelectedIndex > 0 ? _commodities[CommodityName.SelectedIndex] : null;
             temp.Unit = (Units) ComboBoxUnit.SelectedItem;
             temp.Value = Convert.ToDouble(ValueConfirmed.Text);
             _listIndex++;
@@ -123,7 +114,7 @@ namespace RecipeManager.Views
 
         private void ShowVerificationStep(bool boolean)
         {
-            this.Height = boolean ? 270 : 200;
+            Height = boolean ? 270 : 200;
             NotificationTextBlock.Text = boolean 
                 ? "Vi kunne ikke bestemme de følgende ingredienser, bekræft dem venligst" 
                 : "Henter opskrift, vent venligst";
