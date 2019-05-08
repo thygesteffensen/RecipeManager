@@ -16,6 +16,11 @@
    - They can be scraped from the web. Currently only recipies from [valdemarsro.dk](https://valdemarsro.dk) can be scraped.
   - Recipies and categories can be edited and deleted via the GUI.
 
+---
+## Can I find a deployed/build version?
+ YES! Sometime in the near future, it will be foud here: [thygesteffensen.dk](http://www.thygesteffensen.dk).
+
+---
 ## Other
  Feel free to use, modify or do what you want with the entire code base :D
 
