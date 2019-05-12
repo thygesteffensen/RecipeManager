@@ -134,7 +134,7 @@ namespace RecipeManager.Models
     }
 
     /// <summary>
-    /// Used to shawdow unknown commodities...
+    /// Used to shadow unknown commodities...
     /// </summary>
     public class CommodityShadow
     {

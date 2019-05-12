@@ -12,7 +12,7 @@ namespace RecipeManager.Models
             this._dbPath = dbPath;
         }
 
-        public List<CommodityToCategory> GetComodities(CommodityCategory commodityCategory)
+        public List<CommodityToCategory> GetCommodities(CommodityCategory commodityCategory)
         {
             using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
             {

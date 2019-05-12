@@ -6,30 +6,40 @@
         mc:Ignorable="d"
         Title="Opskrift håndtertingssystem" Height="550" Width="1000">
 
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="150" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-    <DockPanel>
         <!-- The _ (underscore) indicates the Alt+ shortcut! Very nice yes! -->
-        <Menu DockPanel.Dock="Top">
+        <Menu Grid.ColumnSpan="3" Grid.Row="0">
             <MenuItem Header="_File">
                 <MenuItem Header="_Ny">
                     <MenuItem Header="_Opskrift">
-                        <MenuItem Header="_Manuel" Click="OpenCreateRecipe"/>    
-                        <MenuItem Header="_Fra link" Click="OpenScrapeLink"/>
+                        <MenuItem Header="_Manuel" Click="OpenCreateRecipe" />
+                        <MenuItem Header="_Fra link" Click="OpenScrapeLink" />
                     </MenuItem>
-                    <MenuItem Header="_Kategori" Click="OpenCreateRecipeCategory"/>
-                    <MenuItem Header="_Råvare"/>
+                    <MenuItem Header="_Kategori" Click="OpenCreateRecipeCategory" />
                 </MenuItem>
-                <MenuItem Header="_Luk"/>
-                <MenuItem Header="_Gem"/>
+                <MenuItem Header="_Luk" />
                 <Separator />
-                <MenuItem Header="_Indlæs data" Click="LoadDummyData_Click"/>
-                <MenuItem Header="_Slet alt data" Click="WipeDatabase"/>
+                <MenuItem Header="_Indlæs data" Click="LoadDummyData_Click" />
+                <MenuItem Header="_Slet alt data" Click="WipeDatabase" />
                 <Separator />
-                <MenuItem Header="_Exit"/>
+                <MenuItem Header="_Exit" Click="ExitProgram" />
             </MenuItem>
         </Menu>
 
-        <ListBox x:Name="CategoryListBox" DockPanel.Dock="Left" Width="150" Margin="10,10,0,10" SelectionChanged="CategoryListBox_SelectionChanged">
+
+        <ListBox x:Name="CategoryListBox" Grid.Column="0" Grid.Row="1" Margin="10,10,0,0"
+                 SelectionChanged="CategoryListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
@@ -38,44 +48,65 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
+        <Button Click="OpenCreateRecipeCategory" Grid.Column="0" Grid.Row="2" Margin="10,0,0,10">
+            Tilføj kategori
+        </Button>
 
-        <ListBox x:Name="RecipeListBox" DockPanel.Dock="Left" Margin="10,10,0,10"  Width="150" SelectionChanged="RecipeListBox_SelectionChanged">
+
+        <ListBox x:Name="RecipeListBox" Grid.Column="1" Grid.Row="1" Margin="10,10,0,0"
+                 SelectionChanged="RecipeListBox_SelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
                         <Grid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="Ændre" Click="EditRecipe"/>
-                                <MenuItem Header="Slet" Click="DeleteRecipe"/>
+                                <MenuItem Header="Ændre" Click="EditRecipe" />
+                                <MenuItem Header="Slet" Click="DeleteRecipe" />
                             </ContextMenu>
                         </Grid.ContextMenu>
-<!--                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" />-->
-                        <Label Content="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Padding="0"/>
+                        <!--                        <TextBlock Text="{Binding Name}" HorizontalAlignment="Stretch" />-->
+                        <Label Content="{Binding Name}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                               Padding="0" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock x:Name="TextBlockTitle" DockPanel.Dock="Top" FontSize="24" Margin="10,10,0,0" Height="32"/>
-        <ListBox x:Name="CommodityListBox" DockPanel.Dock="Left" Margin="10,10,0,10"  Width="200">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0,2">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" Text="{Binding Value}" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,5,0" Text="{Binding Unit}" />
-                        <TextBlock Grid.Row="0" Grid.Column="2" Margin="0,0,5,0" Text="{Binding Commodity.Name}" />
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <TextBox x:Name="TextBoxRecipe" Margin="10,10,10,10" VerticalAlignment="Stretch" TextWrapping="WrapWithOverflow" />
+        <Button Click="OpenSelectCreateRecipe" Grid.Column="1" Grid.Row="2" Margin="10,0,0,10" >
+            Tilføj opskrift
+        </Button>
 
-    </DockPanel>
+        <Grid Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="45" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="TextBlockTitle" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontSize="24" Margin="10,10,0,0" Height="32" />
+            <ListBox x:Name="CommodityListBox" Grid.Column="0" Grid.Row="1" Margin="10,10,0,10">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="0,2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" Text="{Binding Value}" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,5,0" Text="{Binding Unit}" />
+                            <TextBlock Grid.Row="0" Grid.Column="2" Margin="0,0,5,0" Text="{Binding Commodity.Name}" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBox x:Name="TextBoxRecipe" Grid.Column="1" Grid.Row="1"  Margin="10,10,10,10" VerticalAlignment="Stretch"
+                     TextWrapping="WrapWithOverflow" />
+        </Grid>
+    </Grid>
 </Window>

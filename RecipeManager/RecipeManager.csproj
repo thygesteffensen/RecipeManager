@@ -88,6 +88,9 @@
     <Compile Include="Views\CreateRecipeCategory.xaml.cs">
       <DependentUpon>CreateRecipeCategory.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\CreateRecipeModeDialog.xaml.cs">
+      <DependentUpon>CreateRecipeModeDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EnumUtility.cs" />
     <Compile Include="Views\Scrape.xaml.cs">
       <DependentUpon>Scrape.xaml</DependentUpon>
@@ -109,6 +112,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CreateRecipeCategory.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CreateRecipeModeDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -165,6 +172,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>RecipeManagerDatabase.mdf</DependentUpon>
     </Content>
+    <Resource Include="Views\Icons\add.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

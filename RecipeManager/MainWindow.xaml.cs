@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using RecipeManager.Controllers;
 using RecipeManager.Models;
+using RecipeManager.Views;
 
 namespace RecipeManager
 {
@@ -87,6 +89,16 @@ namespace RecipeManager
             ReloadView();
         }
 
+        private void OpenSelectCreateRecipe(object sender, RoutedEventArgs e)
+        {
+            CreateRecipeModeDialog dialog = new CreateRecipeModeDialog();
+            if (dialog.ShowDialog() != true) return;
+
+            if (dialog.Selection == 1)
+                OpenCreateRecipe(sender, e);
+            else if (dialog.Selection == 2) OpenScrapeLink(sender, e);
+        }
+
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)
         {
             _controlMainWindowController.OpenCreateRecipeWindow();
@@ -109,8 +121,14 @@ namespace RecipeManager
         {
             CategoryListBox.ItemsSource = _controlMainWindowController.GetCategories();
             RecipeListBox.ItemsSource = null;
+            CommodityListBox.ItemsSource = null;
             TextBlockTitle.Text = "";
             TextBoxRecipe.Text = "";
+        }
+
+        private void ExitProgram(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(Environment.ExitCode);
         }
     }
 }
