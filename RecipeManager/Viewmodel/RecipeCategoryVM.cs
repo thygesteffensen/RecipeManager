@@ -8,11 +8,11 @@ using RecipeManager.Models;
 
 namespace RecipeManager.Controllers
 {
-    class RecipeCategoryController
+    class RecipeCategoryVM
     {
         private readonly RecipeCategoryModel _recipeCategoryModel;
 
-        public RecipeCategoryController(string dbPath)
+        public RecipeCategoryVM(string dbPath)
         {
             _recipeCategoryModel = new RecipeCategoryModel(dbPath);
         }

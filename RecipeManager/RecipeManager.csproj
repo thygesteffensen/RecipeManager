@@ -72,9 +72,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controllers\RecipeCategoryController.cs" />
-    <Compile Include="Controllers\RecipeController.cs" />
-    <Compile Include="Controllers\ScrapeController.cs" />
+    <Compile Include="Viewmodel\RecipeCategoryVM.cs" />
+    <Compile Include="Viewmodel\RecipeVM.cs" />
+    <Compile Include="Viewmodel\ScrapeVM.cs" />
     <Compile Include="Models\CCCModel.cs" />
     <Compile Include="Models\CommodityCategoryModel.cs" />
     <Compile Include="Models\CommodityModel.cs" />
@@ -125,7 +125,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\MainWindowController.cs" />
+    <Compile Include="Viewmodel\MainWindowVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

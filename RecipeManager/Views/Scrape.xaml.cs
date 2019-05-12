@@ -13,14 +13,14 @@ namespace RecipeManager.Views
     /// </summary>
     public partial class Scrape : Window
     {
-        private readonly ScrapeController _scrapeController;
+        private readonly ScrapeVM _scrapeVm;
         private readonly List<Commodity> _commodities; 
-        public Scrape(ScrapeController scrapeController)
+        public Scrape(ScrapeVM scrapeVm)
         {
             InitializeComponent();
-            this._scrapeController = scrapeController;
+            this._scrapeVm = scrapeVm;
 
-            _commodities = scrapeController.GetCommodities();
+            _commodities = scrapeVm.GetCommodities();
 
             List<string> commodityNames = _commodities.Select(commodity => (string) commodity.Name).ToList();
             CommodityName.ItemsSource = commodityNames;
@@ -38,8 +38,8 @@ namespace RecipeManager.Views
         }
 
         private int _listIndex = 0;
-        private List<ScrapeController.CommodityShadowConfirmed> _shadowList;
-        public void ConfirmCommodities(List<ScrapeController.CommodityShadowConfirmed> shadowList)
+        private List<ScrapeVM.CommodityShadowConfirmed> _shadowList;
+        public void ConfirmCommodities(List<ScrapeVM.CommodityShadowConfirmed> shadowList)
         {
            
             ShowVerificationStep(true);
@@ -86,7 +86,7 @@ namespace RecipeManager.Views
             _listIndex++;
             if (_listIndex == _shadowList.Count)
             {
-                _scrapeController.StoreRecipe(_shadowList,(RecipeCategory) RecipeCategoryDropdown.SelectedItem);
+                _scrapeVm.StoreRecipe(_shadowList,(RecipeCategory) RecipeCategoryDropdown.SelectedItem);
                 return;
             }
             PopulateConfirmFields();
@@ -108,7 +108,7 @@ namespace RecipeManager.Views
             URLInput.IsEnabled = false;
             NotificationTextBlock.Visibility = Visibility.Visible;
             // Calling the controller
-            await Task.Run(() => _scrapeController.ScrapeWebsite(url));
+            await Task.Run(() => _scrapeVm.ScrapeWebsite(url));
         }
 
 

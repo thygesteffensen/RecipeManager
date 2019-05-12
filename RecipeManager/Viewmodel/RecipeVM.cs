@@ -7,13 +7,13 @@ using RecipeManager.Views;
 
 namespace RecipeManager.Controllers
 {
-    public class RecipeController
+    public class RecipeVM
     {
         private readonly CreateRecipe _createRecipe;
         private readonly string _dbPath;
 
 
-        public RecipeController(string dbPath, string title, Recipe recipe = null)
+        public RecipeVM(string dbPath, string title, Recipe recipe = null)
         {
             this._dbPath = dbPath;
             this._createRecipe = new CreateRecipe(this, recipe);

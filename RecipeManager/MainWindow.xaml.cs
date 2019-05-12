@@ -8,12 +8,12 @@ namespace RecipeManager
 {
     public partial class MainWindow : Window
     {
-        private readonly MainWindowController _controlMainWindowController;
+        private readonly MainWindowVM _controlMainWindowVm;
 
         public MainWindow()
         {
             InitializeComponent();
-            _controlMainWindowController = new MainWindowController();
+            _controlMainWindowVm = new MainWindowVM();
 
             ReloadView();
         }
@@ -27,7 +27,7 @@ namespace RecipeManager
 
         private void LoadRecipes(RecipeCategory category)
         {
-            RecipeListBox.ItemsSource = _controlMainWindowController.GetRecipes(category);
+            RecipeListBox.ItemsSource = _controlMainWindowVm.GetRecipes(category);
         }
 
         private void RecipeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -37,7 +37,7 @@ namespace RecipeManager
             Recipe recipe = (Recipe) RecipeListBox.SelectedItem;
             TextBlockTitle.Text = recipe.Name;
             TextBoxRecipe.Text = recipe.Description;
-            CommodityListBox.ItemsSource = _controlMainWindowController.GetCommodities(recipe);
+            CommodityListBox.ItemsSource = _controlMainWindowVm.GetCommodities(recipe);
         }
 
         private void DeleteRecipe(object sender, RoutedEventArgs e)
@@ -46,7 +46,7 @@ namespace RecipeManager
             if (MessageBox.Show($"Slet {recipe.Name}", "Er du sikker?", MessageBoxButton.YesNo,
                     MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
             {
-                if (_controlMainWindowController.DeleteRecipe(recipe))
+                if (_controlMainWindowVm.DeleteRecipe(recipe))
                 {
                     MessageBox.Show($"{recipe.Name} er blevet fjernet!", "Succes", MessageBoxButton.OK,
                         MessageBoxImage.None);
@@ -63,7 +63,7 @@ namespace RecipeManager
         private void EditRecipe(object sender, RoutedEventArgs e)
         {
             Recipe recipe = (Recipe) RecipeListBox.SelectedItem;
-            if (_controlMainWindowController.EditRecipe(recipe))
+            if (_controlMainWindowVm.EditRecipe(recipe))
             {
                 MessageBox.Show($"{recipe.Name} er blevet ændret!", "Succes", MessageBoxButton.OK,
                     MessageBoxImage.None);
@@ -79,13 +79,13 @@ namespace RecipeManager
 
         private void LoadDummyData_Click(object sender, RoutedEventArgs e)
         {
-            _controlMainWindowController.PopulateDBDummyData();
+            _controlMainWindowVm.PopulateDBDummyData();
             ReloadView();
         }
 
         private void WipeDatabase(object sender, RoutedEventArgs e)
         {
-            _controlMainWindowController.DeleteAllContent();
+            _controlMainWindowVm.DeleteAllContent();
             ReloadView();
         }
 
@@ -101,25 +101,25 @@ namespace RecipeManager
 
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)
         {
-            _controlMainWindowController.OpenCreateRecipeWindow();
+            _controlMainWindowVm.OpenCreateRecipeWindow();
             ReloadView();
         }
 
         private void OpenScrapeLink(object sender, RoutedEventArgs e)
         {
-            _controlMainWindowController.OpenScrapeLink();
+            _controlMainWindowVm.OpenScrapeLink();
             ReloadView();
         }
 
         private void OpenCreateRecipeCategory(object sender, RoutedEventArgs e)
         {
-            _controlMainWindowController.OpenCreateRecipeCategoryWindow();
+            _controlMainWindowVm.OpenCreateRecipeCategoryWindow();
             ReloadView();
         }
 
         private void ReloadView()
         {
-            CategoryListBox.ItemsSource = _controlMainWindowController.GetCategories();
+            CategoryListBox.ItemsSource = _controlMainWindowVm.GetCategories();
             RecipeListBox.ItemsSource = null;
             CommodityListBox.ItemsSource = null;
             TextBlockTitle.Text = "";

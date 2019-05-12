@@ -9,11 +9,11 @@ using RecipeManager.Views;
 
 namespace RecipeManager.Controllers
 {
-    class MainWindowController
+    class MainWindowVM
     {
         private readonly string _dbPath;// A connection which is used by all interactions with the DB.
 
-        public MainWindowController()
+        public MainWindowVM()
         {
             // Getting the string from the config
             var path = ConfigurationManager.ConnectionStrings["DatabaseConnectionString"].ToString();
@@ -56,7 +56,7 @@ namespace RecipeManager.Controllers
         {
             try
             {
-                RecipeController recipeController = new RecipeController(_dbPath, $"Ændre {recipe.Name}", recipe);
+                RecipeVM recipeVm = new RecipeVM(_dbPath, $"Ændre {recipe.Name}", recipe);
                 return true;
             }
             catch (SqlException)
@@ -88,12 +88,12 @@ namespace RecipeManager.Controllers
 
         public void OpenScrapeLink()
         {
-            ScrapeController scrapeController = new ScrapeController(_dbPath);
+            ScrapeVM scrapeVm = new ScrapeVM(_dbPath);
         }
 
         public void OpenCreateRecipeWindow()
         {
-            RecipeController recipeController = new RecipeController(_dbPath, "Opret opskrift");
+            RecipeVM recipeVm = new RecipeVM(_dbPath, "Opret opskrift");
         }
 
         public void DeleteAllContent()

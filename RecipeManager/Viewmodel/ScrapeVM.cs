@@ -10,7 +10,7 @@ using RecipeManager.Views;
 
 namespace RecipeManager.Controllers
 {
-    public class ScrapeController
+    public class ScrapeVM
     {
         private readonly Scrape _scrape;
         private readonly CommodityModel _commodityModel;
@@ -22,17 +22,17 @@ namespace RecipeManager.Controllers
         readonly List<string> _recipeDescription = new List<string>();
         readonly List<string> _ingredientsList = new List<string>();
 
-        public ScrapeController(string dbPath)
+        public ScrapeVM(string dbPath)
         {
             this._commodityModel = new CommodityModel(dbPath);
             this._recipeModel = new RecipeModel(dbPath);
             this._rcModel = new RCModel(dbPath);
             this._recipeCommodityModel = new RecipeCommodityModel(dbPath);
 
-            RecipeCategoryController _recipeCategoryController = new RecipeCategoryController(dbPath);
+            RecipeCategoryVM recipeCategoryVm = new RecipeCategoryVM(dbPath);
 
             _scrape = new Scrape(this);
-            _scrape.SetContentCategoryDropdown(_recipeCategoryController.GetRecipeCategories());
+            _scrape.SetContentCategoryDropdown(recipeCategoryVm.GetRecipeCategories());
             _scrape.ShowDialog();
         }
 

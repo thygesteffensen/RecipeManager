@@ -16,24 +16,24 @@ namespace RecipeManager.Views
     public partial class CreateRecipe : Window
     {
         private readonly List<CommodityShadow> _shawdowCommodities = new List<CommodityShadow>();
-        private readonly RecipeController _recipeController;
+        private readonly RecipeVM _recipeVm;
         private readonly bool _editState = false;
         private readonly Recipe _editRecipe = null;
 
         public int Id { get; private set; }
 
-        public CreateRecipe(RecipeController recipeController, Recipe recipe)
+        public CreateRecipe(RecipeVM recipeVm, Recipe recipe)
         {
-            _recipeController = recipeController;
+            _recipeVm = recipeVm;
             InitializeComponent();
 
 
-            RecipeCategoryDropdown.ItemsSource = _recipeController.GetRecipeCategories();
+            RecipeCategoryDropdown.ItemsSource = _recipeVm.GetRecipeCategories();
             RecipeCategoryDropdown.SelectedIndex = 0;
             ComboBoxUnit.SelectedIndex = 0;
 
 
-            List<Commodity> commodities = _recipeController.GetCommodities();
+            List<Commodity> commodities = _recipeVm.GetCommodities();
 
             List<string> commodityNames = commodities.Select(commodity => commodity.Name).ToList();
             CommodityName.ItemsSource = commodityNames;
@@ -43,10 +43,10 @@ namespace RecipeManager.Views
                 _editState = true;
                 _editRecipe = recipe;
                 // Loading information from already existing commodity.
-                RecipeCategory recipeCategory = _recipeController.GetRecipeCategory(recipe).RecipeCategory;
+                RecipeCategory recipeCategory = _recipeVm.GetRecipeCategory(recipe).RecipeCategory;
                 RecipeCategoryDropdown.SelectedItem = recipeCategory;
 
-                _shawdowCommodities = _recipeController.GetCommoditiesFromRecipe(recipe);
+                _shawdowCommodities = _recipeVm.GetCommoditiesFromRecipe(recipe);
 
                 ListBoxCommodities.ItemsSource = _shawdowCommodities;
                 ListBoxCommodities.Items.Refresh();
@@ -181,12 +181,12 @@ namespace RecipeManager.Views
 
             if (_editState)
             {
-                _recipeController.UpdateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory,
+                _recipeVm.UpdateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory,
                     _editRecipe);
             }
             else
             {
-                _recipeController.CreateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory);
+                _recipeVm.CreateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory);
             }
 
             Close();
