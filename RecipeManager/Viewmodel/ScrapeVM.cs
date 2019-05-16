@@ -8,7 +8,7 @@ using System.Windows;
 using RecipeManager.Models;
 using RecipeManager.Views;
 
-namespace RecipeManager.Controllers
+namespace RecipeManager.Viewmodel
 {
     public class ScrapeVM
     {

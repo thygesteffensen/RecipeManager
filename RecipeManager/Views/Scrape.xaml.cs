@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using RecipeManager.Controllers;
 using RecipeManager.Models;
+using RecipeManager.Viewmodel;
 
 namespace RecipeManager.Views
 {

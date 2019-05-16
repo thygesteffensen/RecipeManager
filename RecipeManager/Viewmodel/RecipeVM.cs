@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Transactions;
 using RecipeManager.Models;
 using RecipeManager.Views;
 
-namespace RecipeManager.Controllers
+namespace RecipeManager.Viewmodel
 {
     public class RecipeVM
     {

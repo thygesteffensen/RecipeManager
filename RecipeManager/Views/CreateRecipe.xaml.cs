@@ -5,8 +5,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using RecipeManager.Controllers;
 using RecipeManager.Models;
+using RecipeManager.Viewmodel;
 
 namespace RecipeManager.Views
 {
@@ -124,7 +124,8 @@ namespace RecipeManager.Views
 
         private void RemoveCommodity_Click(object sender, RoutedEventArgs e)
         {
-            // Removing from lsit
+
+            // Removing from list
             _shawdowCommodities.Remove(GetCommodityFromCommodity(sender));
 
             // Refresing list
@@ -139,11 +140,7 @@ namespace RecipeManager.Views
             CommodityName.Text = commodityShadow.Name;
             ComboBoxUnit.SelectedValue = commodityShadow.Unit;
 
-            // Removing from liSt
-            _shawdowCommodities.Remove(GetCommodityFromCommodity(sender));
-
-            // Refreshing list
-            ListBoxCommodities.Items.Refresh();
+            RemoveCommodity_Click(sender, e);
         }
 
         private void SaveRecipe(object sender, RoutedEventArgs e)
@@ -199,13 +196,10 @@ namespace RecipeManager.Views
 
         private CommodityShadow GetCommodityFromCommodity(object sender)
         {
-            // Getting ID from button
+            // Getting ID from 
             var button = sender as Button;
-            var tag = button.Tag;
-            int id = int.Parse(tag.ToString());
 
-            // Getting Commodity list index
-            CommodityShadow commodityShadow = _shawdowCommodities.Find(x => x.Id == id);
+            CommodityShadow commodityShadow = button.DataContext as CommodityShadow;
 
             return commodityShadow;
         }

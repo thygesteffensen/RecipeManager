@@ -70,8 +70,8 @@
                         <TextBlock Grid.Column="0" Text="{Binding Value}" Margin="5,0,5,0"></TextBlock>
 						<TextBlock Grid.Column="1" Text="{Binding Unit}" Margin="5,0,5,0"></TextBlock>
 						<TextBlock Grid.Column="2" Text="{Binding Name}" Margin="5,0,5,0"></TextBlock>
-						<Button Grid.Column="3" Click="RemoveCommodity_Click" Tag="{Binding Id}" Margin="5,0,5,0">Fjern</Button>
-						<Button Grid.Column="4" Click="EditCommodity_Click" Tag="{Binding Id}" Margin="5,0,5,0">Ændre</Button>
+						<Button Grid.Column="3" Click="RemoveCommodity_Click" Margin="5,0,5,0">Fjern</Button>
+						<Button Grid.Column="4" Click="EditCommodity_Click" Margin="5,0,5,0">Ændre</Button>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

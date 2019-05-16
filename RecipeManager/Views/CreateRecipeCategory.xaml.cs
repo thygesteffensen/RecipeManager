@@ -12,8 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using RecipeManager.Controllers;
 using RecipeManager.Models;
+using RecipeManager.Viewmodel;
 
 namespace RecipeManager.Views
 {

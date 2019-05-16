@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using RecipeManager.Models;
 
-namespace RecipeManager.Controllers
+namespace RecipeManager.Viewmodel
 {
     class RecipeCategoryVM
     {

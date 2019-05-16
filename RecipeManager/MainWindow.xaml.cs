@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
-using RecipeManager.Controllers;
 using RecipeManager.Models;
+using RecipeManager.Viewmodel;
 using RecipeManager.Views;
 
 namespace RecipeManager

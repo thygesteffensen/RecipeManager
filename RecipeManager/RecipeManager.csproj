@@ -75,8 +75,6 @@
     <Compile Include="Viewmodel\RecipeCategoryVM.cs" />
     <Compile Include="Viewmodel\RecipeVM.cs" />
     <Compile Include="Viewmodel\ScrapeVM.cs" />
-    <Compile Include="Models\CCCModel.cs" />
-    <Compile Include="Models\CommodityCategoryModel.cs" />
     <Compile Include="Models\CommodityModel.cs" />
     <Compile Include="Models\RCModel.cs" />
     <Compile Include="Models\RecipeCategoryModel.cs" />
