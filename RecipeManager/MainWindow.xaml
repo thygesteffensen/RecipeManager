@@ -20,20 +20,19 @@
 
         <!-- The _ (underscore) indicates the Alt+ shortcut! Very nice yes! -->
         <Menu Grid.ColumnSpan="3" Grid.Row="0">
-            <MenuItem Header="_File">
+            <MenuItem Header="_Fil">
                 <MenuItem Header="_Ny">
                     <MenuItem Header="_Opskrift">
                         <MenuItem Header="_Manuel" Click="OpenCreateRecipe" />
-                        <MenuItem Header="_Fra link" Click="OpenScrapeLink" />
+                        <MenuItem Header="Fra _link" Click="OpenScrapeLink" />
                     </MenuItem>
                     <MenuItem Header="_Kategori" Click="OpenCreateRecipeCategory" />
                 </MenuItem>
-                <MenuItem Header="_Luk" />
                 <Separator />
                 <MenuItem Header="_Indlæs data" Click="LoadDummyData_Click" />
                 <MenuItem Header="_Slet alt data" Click="WipeDatabase" />
                 <Separator />
-                <MenuItem Header="_Exit" Click="ExitProgram" />
+                <MenuItem Header="_Luk" Click="ExitProgram" />
             </MenuItem>
         </Menu>
 
@@ -49,7 +48,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <Button Click="OpenCreateRecipeCategory" Grid.Column="0" Grid.Row="2" Margin="10,0,0,10">
-            Tilføj kategori
+            Tilføj _kategori
         </Button>
 
 
@@ -72,7 +71,7 @@
             </ListBox.ItemTemplate>
         </ListBox>
         <Button Click="OpenSelectCreateRecipe" Grid.Column="1" Grid.Row="2" Margin="10,0,0,10" >
-            Tilføj opskrift
+            Tilføj _opskrift
         </Button>
 
         <Grid Grid.Column="2" Grid.Row="1" Grid.RowSpan="2">
