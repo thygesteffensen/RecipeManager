@@ -7,7 +7,7 @@
         xmlns:models="clr-namespace:RecipeManager.Models"
         mc:Ignorable="d"
         Height="900" Width="650">
-    <Grid Margin="10">
+    <Grid Margin="10" x:Name="CreateRecipeGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
@@ -78,6 +78,6 @@
         </ListBox>
         <Label Grid.Row="4">Beskrivelse:</Label>
         <TextBox x:Name="Description" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" Height="Auto"/>
-        <Button Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,0,0" Click="SaveRecipe">Gem opskrift</Button>
+        <Button x:Name="SaveRecipeButton" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,0,0" Click="SaveRecipe">Gem opskrift</Button>
     </Grid>
 </Window>

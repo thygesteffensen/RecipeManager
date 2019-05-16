@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -143,7 +144,7 @@ namespace RecipeManager.Views
             RemoveCommodity_Click(sender, e);
         }
 
-        private void SaveRecipe(object sender, RoutedEventArgs e)
+        private async void SaveRecipe(object sender, RoutedEventArgs e)
         {
             // Collect all the information! 
             // First we will get the Recipe Category
@@ -176,14 +177,19 @@ namespace RecipeManager.Views
                 return;
             }
 
+            CreateRecipeGrid.IsEnabled = false;
             if (_editState)
             {
-                _recipeVm.UpdateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory,
-                    _editRecipe);
+                SaveRecipeButton.Content = "Opdatere opskriften, vent venligst";
+
+                await Task.Run(() => _recipeVm.UpdateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory,
+                    _editRecipe));
             }
             else
             {
-                _recipeVm.CreateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory);
+                SaveRecipeButton.Content = "Gemmer opskriften, vent venligst";
+
+                await Task.Run(() => _recipeVm.CreateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory));
             }
 
             Close();
