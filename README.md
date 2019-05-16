@@ -15,7 +15,7 @@
 ![Open the program instructyions](HowToFigs/OpenProgram.png)
 
 1. Nu er programmet åbent, hvilket ses på billedet nedenunder. Her er opskriften **Lasagne** valgt fra kategorien **aftensmad**.
-![Image of the homepage](HowToFigs/Homepage.png)
+![Image of the homepage](HowToFigs/HomePage.png)
 
 1. Hvordan laver jeg en kategori?
     * Klikker på den røde knap og udfylder formularen.
