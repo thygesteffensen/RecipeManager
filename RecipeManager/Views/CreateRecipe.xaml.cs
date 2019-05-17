@@ -12,16 +12,14 @@ using RecipeManager.Viewmodel;
 namespace RecipeManager.Views
 {
     /// <summary>
-    /// Interaction logic for CreateRecipe.xaml
+    ///     Interaction logic for CreateRecipe.xaml
     /// </summary>
     public partial class CreateRecipe : Window
     {
-        private readonly List<CommodityShadow> _shawdowCommodities = new List<CommodityShadow>();
+        private readonly Recipe _editRecipe;
+        private readonly bool _editState;
         private readonly RecipeVM _recipeVm;
-        private readonly bool _editState = false;
-        private readonly Recipe _editRecipe = null;
-
-        public int Id { get; private set; }
+        private readonly List<CommodityShadow> _shawdowCommodities = new List<CommodityShadow>();
 
         public CreateRecipe(RecipeVM recipeVm, Recipe recipe)
         {
@@ -34,9 +32,9 @@ namespace RecipeManager.Views
             ComboBoxUnit.SelectedIndex = 0;
 
 
-            List<Commodity> commodities = _recipeVm.GetCommodities();
+            var commodities = _recipeVm.GetCommodities();
 
-            List<string> commodityNames = commodities.Select(commodity => commodity.Name).ToList();
+            var commodityNames = commodities.Select(commodity => commodity.Name).ToList();
             CommodityName.ItemsSource = commodityNames;
 
             if (recipe != null)
@@ -44,7 +42,7 @@ namespace RecipeManager.Views
                 _editState = true;
                 _editRecipe = recipe;
                 // Loading information from already existing commodity.
-                RecipeCategory recipeCategory = _recipeVm.GetRecipeCategory(recipe).RecipeCategory;
+                var recipeCategory = _recipeVm.GetRecipeCategory(recipe).RecipeCategory;
                 RecipeCategoryDropdown.SelectedItem = recipeCategory;
 
                 _shawdowCommodities = _recipeVm.GetCommoditiesFromRecipe(recipe);
@@ -56,6 +54,8 @@ namespace RecipeManager.Views
                 RecipeName.Text = recipe.Name;
             }
         }
+
+        public int Id { get; private set; }
 
 
         private void AddCommodity_Click(object sender, RoutedEventArgs e)
@@ -99,7 +99,7 @@ namespace RecipeManager.Views
             }
             else
             {
-                string name = CommodityName.Text;
+                var name = CommodityName.Text;
                 if (name.Length < 1)
                 {
                     ErrorDialog("Råvare navnet er ikke gyldigt.");
@@ -125,7 +125,6 @@ namespace RecipeManager.Views
 
         private void RemoveCommodity_Click(object sender, RoutedEventArgs e)
         {
-
             // Removing from list
             _shawdowCommodities.Remove(GetCommodityFromCommodity(sender));
 
@@ -135,7 +134,7 @@ namespace RecipeManager.Views
 
         private void EditCommodity_Click(object sender, RoutedEventArgs e)
         {
-            CommodityShadow commodityShadow = GetCommodityFromCommodity(sender);
+            var commodityShadow = GetCommodityFromCommodity(sender);
 
             TextBoxValue.Text = commodityShadow.Value + "";
             CommodityName.Text = commodityShadow.Name;
@@ -148,7 +147,7 @@ namespace RecipeManager.Views
         {
             // Collect all the information! 
             // First we will get the Recipe Category
-            RecipeCategory recipeCategory = RecipeCategoryDropdown.SelectedItem as RecipeCategory;
+            var recipeCategory = RecipeCategoryDropdown.SelectedItem as RecipeCategory;
             if (recipeCategory is null)
             {
                 ErrorDialog("Du har ikke valgt en kategori");
@@ -156,7 +155,7 @@ namespace RecipeManager.Views
             }
 
             // Retrieve recipe name
-            string recipeName = RecipeName.Text;
+            var recipeName = RecipeName.Text;
             if (recipeName.Length < 1)
             {
                 ErrorDialog("Du har ikke angivet et navn på opskriften.");
@@ -164,7 +163,7 @@ namespace RecipeManager.Views
             }
 
             // Retrieve recipe description
-            string recipeDescription = Description.Text;
+            var recipeDescription = Description.Text;
             if (recipeDescription.Length < 1)
             {
                 ErrorDialog("Du har ikke angivet nogen beskrivelse til opskriften.");
@@ -182,14 +181,16 @@ namespace RecipeManager.Views
             {
                 SaveRecipeButton.Content = "Opdatere opskriften, vent venligst";
 
-                await Task.Run(() => _recipeVm.UpdateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory,
+                await Task.Run(() => _recipeVm.UpdateRecipe(_shawdowCommodities, recipeName, recipeDescription,
+                    recipeCategory,
                     _editRecipe));
             }
             else
             {
                 SaveRecipeButton.Content = "Gemmer opskriften, vent venligst";
 
-                await Task.Run(() => _recipeVm.CreateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory));
+                await Task.Run(() =>
+                    _recipeVm.CreateRecipe(_shawdowCommodities, recipeName, recipeDescription, recipeCategory));
             }
 
             Close();
@@ -205,14 +206,14 @@ namespace RecipeManager.Views
             // Getting ID from 
             var button = sender as Button;
 
-            CommodityShadow commodityShadow = button.DataContext as CommodityShadow;
+            var commodityShadow = button.DataContext as CommodityShadow;
 
             return commodityShadow;
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-            Regex regex = new Regex(@"^[0-9]*(?:\.[0-9]*)?$");
+            var regex = new Regex(@"^[0-9]*(?:\.[0-9]*)?$");
             e.Handled = !regex.IsMatch(e.Text);
         }
     }

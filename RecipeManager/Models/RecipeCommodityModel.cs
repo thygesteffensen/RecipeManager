@@ -3,30 +3,30 @@ using System.Data.SqlClient;
 
 namespace RecipeManager.Models
 {
-    class RecipeCommodityModel
+    internal class RecipeCommodityModel
     {
         private readonly string _dbPath;
 
         public RecipeCommodityModel(string dbPath)
         {
-            this._dbPath = dbPath;
+            _dbPath = dbPath;
         }
 
         public List<RecipeCommodity> GetRecipeCommodity(Recipe recipe)
         {
-            List<RecipeCommodity> list = new List<RecipeCommodity>();
+            var list = new List<RecipeCommodity>();
 
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM RecipeCommodity WHERE " +
-                                                       $"RecipeID={recipe.Id}", sqlConnection);
-                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                var sqlCommand = new SqlCommand("SELECT * FROM RecipeCommodity WHERE " +
+                                                $"RecipeID={recipe.Id}", sqlConnection);
+                var sqlDataReader = sqlCommand.ExecuteReader();
                 try
                 {
                     while (sqlDataReader.Read())
                     {
-                        RecipeCommodity recipeCommodity = new RecipeCommodity
+                        var recipeCommodity = new RecipeCommodity
                         {
                             Recipe = recipe,
                             CommodityId = (int) sqlDataReader[1],
@@ -43,11 +43,11 @@ namespace RecipeManager.Models
                 }
             }
 
-            CommodityModel commodityModel = new CommodityModel(_dbPath);
+            var commodityModel = new CommodityModel(_dbPath);
 
-            foreach (RecipeCommodity recipeCommodity in list)
+            foreach (var recipeCommodity in list)
             {
-                Commodity commodity = commodityModel.GetCommodity(recipeCommodity.CommodityId);
+                var commodity = commodityModel.GetCommodity(recipeCommodity.CommodityId);
                 recipeCommodity.Commodity = commodity;
             }
 
@@ -56,11 +56,11 @@ namespace RecipeManager.Models
 
         public void CreateRecipeCommodity(Recipe recipe, Commodity commodity, double Value, string Unit)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand c = new SqlCommand("INSERT INTO RecipeCommodity (RecipeID, CommodityID, Value, Unit) " +
-                                              "VALUES(@RECIPEID, @COMMODITYID, @VALUE, @UNIT)", sqlConnection);
+                var c = new SqlCommand("INSERT INTO RecipeCommodity (RecipeID, CommodityID, Value, Unit) " +
+                                       "VALUES(@RECIPEID, @COMMODITYID, @VALUE, @UNIT)", sqlConnection);
                 c.CommandTimeout = 15;
 
                 c.Parameters.AddWithValue("@RECIPEID", recipe.Id);
@@ -74,20 +74,20 @@ namespace RecipeManager.Models
 
         public void DeleteAllRecipeCommodities()
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand c = new SqlCommand("DELETE FROM RecipeCommodity", sqlConnection);
+                var c = new SqlCommand("DELETE FROM RecipeCommodity", sqlConnection);
                 c.ExecuteNonQuery();
             }
         }
 
         public void DeleteRecipeCommodities(Recipe recipe)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand c = new SqlCommand($"DELETE FROM RecipeCommodity WHERE RecipeID={recipe.Id}", sqlConnection);
+                var c = new SqlCommand($"DELETE FROM RecipeCommodity WHERE RecipeID={recipe.Id}", sqlConnection);
                 c.ExecuteNonQuery();
             }
         }
@@ -111,5 +111,5 @@ namespace RecipeManager.Models
         stk,
         tsk,
         spsk
-    };
+    }
 }

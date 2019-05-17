@@ -71,7 +71,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <Button Click="OpenSelectCreateRecipe" Grid.Column="1" Grid.Row="2" Margin="10,0,0,10" >
+        <Button Click="OpenSelectCreateRecipe" Grid.Column="1" Grid.Row="2" Margin="10,0,0,10">
             Tilføj _opskrift
         </Button>
 
@@ -85,7 +85,8 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <TextBlock x:Name="TextBlockTitle" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontSize="24" Margin="10,10,0,0" Height="32" />
+            <TextBlock x:Name="TextBlockTitle" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" FontSize="24"
+                       Margin="10,10,0,0" Height="32" />
             <ListBox x:Name="CommodityListBox" Grid.Column="0" Grid.Row="1" Margin="10,10,0,10">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -105,7 +106,8 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-            <TextBox x:Name="TextBoxRecipe" Grid.Column="1" Grid.Row="1"  Margin="10,10,10,10" VerticalAlignment="Stretch"
+            <TextBox x:Name="TextBoxRecipe" Grid.Column="1" Grid.Row="1" Margin="10,10,10,10"
+                     VerticalAlignment="Stretch"
                      TextWrapping="WrapWithOverflow" />
         </Grid>
     </Grid>

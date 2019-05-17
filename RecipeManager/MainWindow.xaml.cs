@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 using RecipeManager.Models;
 using RecipeManager.Viewmodel;
 using RecipeManager.Views;
@@ -19,10 +20,10 @@ namespace RecipeManager
         }
 
         private void CategoryListBox_SelectionChanged(object sender,
-            System.Windows.Controls.SelectionChangedEventArgs e)
+            SelectionChangedEventArgs e)
         {
             if (CategoryListBox.SelectedItem != null)
-                LoadRecipes((CategoryListBox.SelectedItem as RecipeCategory));
+                LoadRecipes(CategoryListBox.SelectedItem as RecipeCategory);
         }
 
         private void LoadRecipes(RecipeCategory category)
@@ -30,11 +31,11 @@ namespace RecipeManager
             RecipeListBox.ItemsSource = _controlMainWindowVm.GetRecipes(category);
         }
 
-        private void RecipeListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private void RecipeListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (RecipeListBox.SelectedItem == null) return;
 
-            Recipe recipe = (Recipe) RecipeListBox.SelectedItem;
+            var recipe = (Recipe) RecipeListBox.SelectedItem;
             TextBlockTitle.Text = recipe.Name;
             TextBoxRecipe.Text = recipe.Description;
             CommodityListBox.ItemsSource = _controlMainWindowVm.GetCommodities(recipe);
@@ -42,7 +43,7 @@ namespace RecipeManager
 
         private void DeleteRecipe(object sender, RoutedEventArgs e)
         {
-            Recipe recipe = (Recipe) RecipeListBox.SelectedItem;
+            var recipe = (Recipe) RecipeListBox.SelectedItem;
             if (MessageBox.Show($"Slet {recipe.Name}", "Er du sikker?", MessageBoxButton.YesNo,
                     MessageBoxImage.Exclamation) == MessageBoxResult.Yes)
             {
@@ -62,7 +63,7 @@ namespace RecipeManager
 
         private void EditRecipe(object sender, RoutedEventArgs e)
         {
-            Recipe recipe = (Recipe) RecipeListBox.SelectedItem;
+            var recipe = (Recipe) RecipeListBox.SelectedItem;
             if (_controlMainWindowVm.EditRecipe(recipe))
             {
                 MessageBox.Show($"{recipe.Name} er blevet ændret!", "Succes", MessageBoxButton.OK,
@@ -91,7 +92,7 @@ namespace RecipeManager
 
         private void OpenSelectCreateRecipe(object sender, RoutedEventArgs e)
         {
-            CreateRecipeModeDialog dialog = new CreateRecipeModeDialog();
+            var dialog = new CreateRecipeModeDialog();
             if (dialog.ShowDialog() != true) return;
 
             if (dialog.Selection == 1)

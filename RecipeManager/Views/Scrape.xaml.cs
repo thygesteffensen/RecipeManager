@@ -10,20 +10,24 @@ using RecipeManager.Viewmodel;
 namespace RecipeManager.Views
 {
     /// <summary>
-    /// Interaction logic for Scrape.xaml
+    ///     Interaction logic for Scrape.xaml
     /// </summary>
     public partial class Scrape : Window
     {
+        private readonly List<Commodity> _commodities;
         private readonly ScrapeVM _scrapeVm;
-        private readonly List<Commodity> _commodities; 
+
+        private int _listIndex;
+        private List<ScrapeVM.CommodityShadowConfirmed> _shadowList;
+
         public Scrape(ScrapeVM scrapeVm)
         {
             InitializeComponent();
-            this._scrapeVm = scrapeVm;
+            _scrapeVm = scrapeVm;
 
             _commodities = scrapeVm.GetCommodities();
 
-            List<string> commodityNames = _commodities.Select(commodity => (string) commodity.Name).ToList();
+            var commodityNames = _commodities.Select(commodity => commodity.Name).ToList();
             CommodityName.ItemsSource = commodityNames;
 
             /* Hidden objects which should not be seen yet */
@@ -38,19 +42,16 @@ namespace RecipeManager.Views
             RecipeCategoryDropdown.SelectedIndex = 0;
         }
 
-        private int _listIndex = 0;
-        private List<ScrapeVM.CommodityShadowConfirmed> _shadowList;
         public void ConfirmCommodities(List<ScrapeVM.CommodityShadowConfirmed> shadowList)
         {
-           
             ShowVerificationStep(true);
-            this._shadowList = shadowList;
+            _shadowList = shadowList;
             PopulateConfirmFields();
         }
 
         public void PopulateConfirmFields()
         {
-            ConfirmButton.Content = $"Bekræft ({_listIndex+1}/{_shadowList.Count})";
+            ConfirmButton.Content = $"Bekræft ({_listIndex + 1}/{_shadowList.Count})";
             ScrapeVM.CommodityShadowConfirmed temp;
             try
             {
@@ -103,16 +104,17 @@ namespace RecipeManager.Views
             _listIndex++;
             if (_listIndex == _shadowList.Count)
             {
-                _scrapeVm.StoreRecipe(_shadowList,(RecipeCategory) RecipeCategoryDropdown.SelectedItem);
+                _scrapeVm.StoreRecipe(_shadowList, (RecipeCategory) RecipeCategoryDropdown.SelectedItem);
                 return;
             }
+
             PopulateConfirmFields();
         }
 
 
         private async void GetRecipeInitializeProcess(object sender, RoutedEventArgs e)
         {
-            string url = URLInput.Text;
+            var url = URLInput.Text;
             if (!url.Contains("valdemarsro"))
             {
                 // This check is only due to lag of real dev
@@ -120,6 +122,7 @@ namespace RecipeManager.Views
                     MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
+
             // Getting the view ready
             RecipeCategoryDropdown.IsEnabled = false;
             GetRecipeButton.IsEnabled = false;
@@ -131,13 +134,13 @@ namespace RecipeManager.Views
                 await Task.Run(() => _scrapeVm.ScrapeWebsite(url));
                 return;
             }
-            catch (UriFormatException exp)
+            catch (UriFormatException)
             {
                 NotificationTextBlock.Visibility = Visibility.Hidden;
                 MessageBox.Show("Kunne ikke finde en opskrift på den givne side", "Forkert URL", MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
-            catch (WebException exp)
+            catch (WebException)
             {
                 NotificationTextBlock.Visibility = Visibility.Hidden;
                 MessageBox.Show("Der er ingen internetforbindelse", "Ingen forbindelse", MessageBoxButton.OK,
@@ -153,8 +156,8 @@ namespace RecipeManager.Views
         private void ShowVerificationStep(bool boolean)
         {
             Height = boolean ? 270 : 200;
-            NotificationTextBlock.Text = boolean 
-                ? "Vi kunne ikke bestemme de følgende ingredienser, bekræft dem venligst" 
+            NotificationTextBlock.Text = boolean
+                ? "Vi kunne ikke bestemme de følgende ingredienser, bekræft dem venligst"
                 : "Henter opskrift, vent venligst";
             AmountGuess.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;
             UnitGuess.Visibility = boolean ? Visibility.Visible : Visibility.Hidden;

@@ -2,31 +2,30 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Transactions;
-using System.Windows;
 
 namespace RecipeManager.Models
 {
-    class RecipeModel
+    internal class RecipeModel
     {
         private readonly string _dbPath;
 
         public RecipeModel(string dbPath)
         {
-            this._dbPath = dbPath;
+            _dbPath = dbPath;
         }
 
         public Recipe GetRecipe(int ID)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand sqlCommand = new SqlCommand($"SELECT * FROM Recipe WHERE Id={ID}", sqlConnection);
-                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                var sqlCommand = new SqlCommand($"SELECT * FROM Recipe WHERE Id={ID}", sqlConnection);
+                var sqlDataReader = sqlCommand.ExecuteReader();
                 try
                 {
                     if (sqlDataReader.Read())
                     {
-                        Recipe recipe = new Recipe
+                        var recipe = new Recipe
                         {
                             Id = (int) sqlDataReader[0],
                             Name = (string) sqlDataReader[1],
@@ -47,11 +46,11 @@ namespace RecipeManager.Models
 
         public Recipe CreateRecipe(string Name, string Description)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                int id = getNextIDRecipes();
-                SqlCommand c = new SqlCommand(
+                var id = getNextIDRecipes();
+                var c = new SqlCommand(
                     "INSERT INTO Recipe (Id, Name, Description) VALUES(@ID, @NAME, @DESCRIPTION)",
                     sqlConnection);
                 c.CommandTimeout = 15;
@@ -61,26 +60,26 @@ namespace RecipeManager.Models
 
                 c.ExecuteNonQuery();
 
-                return GetRecipe((id));
+                return GetRecipe(id);
             }
         }
 
         public List<Recipe> GetRecipes(RecipeCategory recipeCategory)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand sqlCommand =
+                var sqlCommand =
                     new SqlCommand(
                         $"SELECT * FROM Recipe INNER JOIN RC ON Recipe.Id = RC.RecipeID WHERE RC.RecipeCategoryID = {recipeCategory.Id}",
                         sqlConnection);
-                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                var sqlDataReader = sqlCommand.ExecuteReader();
                 try
                 {
-                    List<Recipe> recipes = new List<Recipe>();
+                    var recipes = new List<Recipe>();
                     while (sqlDataReader.Read())
                     {
-                        Recipe recipe = new Recipe
+                        var recipe = new Recipe
                         {
                             Id = (int) sqlDataReader[0],
                             Name = (string) sqlDataReader[1],
@@ -101,29 +100,29 @@ namespace RecipeManager.Models
 
         public void DeleteRecipes()
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand c = new SqlCommand("DELETE FROM Recipe", sqlConnection);
+                var c = new SqlCommand("DELETE FROM Recipe", sqlConnection);
                 c.ExecuteNonQuery();
             }
         }
 
         public void DeleteRecipe(Recipe recipe)
         {
-            using (TransactionScope scope = new TransactionScope())
+            using (var scope = new TransactionScope())
             {
                 // Delete the recipes occurence in its category and its commodities
-                RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+                var recipeCommodityModel = new RecipeCommodityModel(_dbPath);
                 recipeCommodityModel.DeleteRecipeCommodities(recipe);
 
-                RCModel rcModel = new RCModel(_dbPath);
+                var rcModel = new RCModel(_dbPath);
                 rcModel.DeleteRC(recipe);
 
-                using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+                using (var sqlConnection = new SqlConnection(_dbPath))
                 {
                     sqlConnection.Open();
-                    SqlCommand c = new SqlCommand($"DELETE FROM Recipe WHERE Id={recipe.Id}", sqlConnection);
+                    var c = new SqlCommand($"DELETE FROM Recipe WHERE Id={recipe.Id}", sqlConnection);
                     c.ExecuteNonQuery();
                 }
 
@@ -133,29 +132,26 @@ namespace RecipeManager.Models
 
         public void EditRecipe(Recipe recipe, string recipeName, string recipeDescription)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand c = new SqlCommand($@"UPDATE Recipe SET Name='{recipeName}', Description='{recipeDescription}' WHERE Id={recipe.Id}", sqlConnection);
+                var c = new SqlCommand(
+                    $@"UPDATE Recipe SET Name='{recipeName}', Description='{recipeDescription}' WHERE Id={recipe.Id}",
+                    sqlConnection);
                 c.ExecuteNonQuery();
             }
         }
 
         public int getNextIDRecipes()
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dbPath))
+            using (var sqlConnection = new SqlConnection(_dbPath))
             {
                 sqlConnection.Open();
-                SqlCommand c = new SqlCommand("SELECT MAX(Id) FROM Recipe", sqlConnection);
-                object obj = c.ExecuteScalar();
-                if (obj is System.DBNull)
-                {
+                var c = new SqlCommand("SELECT MAX(Id) FROM Recipe", sqlConnection);
+                var obj = c.ExecuteScalar();
+                if (obj is DBNull)
                     return 1;
-                }
-                else
-                {
-                    return (int) c.ExecuteScalar() + 1;
-                }
+                return (int) c.ExecuteScalar() + 1;
             }
         }
     }

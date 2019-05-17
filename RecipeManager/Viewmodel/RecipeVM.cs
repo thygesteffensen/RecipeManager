@@ -14,15 +14,15 @@ namespace RecipeManager.Viewmodel
 
         public RecipeVM(string dbPath, string title, Recipe recipe = null)
         {
-            this._dbPath = dbPath;
-            this._createRecipe = new CreateRecipe(this, recipe);
+            _dbPath = dbPath;
+            _createRecipe = new CreateRecipe(this, recipe);
             _createRecipe.Title = title;
             _createRecipe.ShowDialog();
         }
 
         public RecipeToCategory GetRecipeCategory(Recipe recipe)
         {
-            RCModel rcModel = new RCModel(_dbPath);
+            var rcModel = new RCModel(_dbPath);
             return rcModel.GetCategory(recipe);
         }
 
@@ -44,11 +44,11 @@ namespace RecipeManager.Viewmodel
         public void UpdateRecipe(List<CommodityShadow> commodityList, string recipeName, string recipeDescription,
             RecipeCategory recipeCategory, Recipe recipe)
         {
-            using (TransactionScope scope = new TransactionScope())
+            using (var scope = new TransactionScope())
             {
-                RCModel rcModel = new RCModel(_dbPath);
-                RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
-                RecipeModel recipeModel = new RecipeModel(_dbPath);
+                var rcModel = new RCModel(_dbPath);
+                var recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+                var recipeModel = new RecipeModel(_dbPath);
 
                 // We do not want to delete the recipe, since this will change its place
                 // on the list, but we delete all the connections to other tuples!
@@ -67,20 +67,16 @@ namespace RecipeManager.Viewmodel
         private void RecipeToDb(List<CommodityShadow> commodityList, string recipeName, string recipeDescription,
             RecipeCategory recipeCategory, Recipe recipe = null)
         {
-            RCModel rcModel = new RCModel(_dbPath);
-            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
-            RecipeModel recipeModel = new RecipeModel(_dbPath);
-            CommodityModel commodityModel = new CommodityModel(_dbPath);
+            var rcModel = new RCModel(_dbPath);
+            var recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+            var recipeModel = new RecipeModel(_dbPath);
+            var commodityModel = new CommodityModel(_dbPath);
 
-            if (recipe == null)
-            {
-                recipe = recipeModel.CreateRecipe(recipeName, recipeDescription);
-            }
+            if (recipe == null) recipe = recipeModel.CreateRecipe(recipeName, recipeDescription);
 
             rcModel.CreateRC(recipe, recipeCategory);
 
             foreach (var commodityShadow in commodityList)
-            {
                 if (commodityShadow.Commodity != null)
                 {
                     recipeCommodityModel.CreateRecipeCommodity(recipe, commodityShadow.Commodity, commodityShadow.Value,
@@ -88,20 +84,19 @@ namespace RecipeManager.Viewmodel
                 }
                 else
                 {
-                    Commodity commodity = commodityModel.CreateCommodity(commodityShadow.Name);
+                    var commodity = commodityModel.CreateCommodity(commodityShadow.Name);
                     recipeCommodityModel.CreateRecipeCommodity(recipe, commodity, commodityShadow.Value,
                         commodityShadow.Unit.ToString());
                 }
-            }
         }
 
         public List<CommodityShadow> GetCommoditiesFromRecipe(Recipe recipe)
         {
-            RecipeCommodityModel recipeCommodityModel = new RecipeCommodityModel(_dbPath);
-            List<RecipeCommodity> list = recipeCommodityModel.GetRecipeCommodity(recipe);
+            var recipeCommodityModel = new RecipeCommodityModel(_dbPath);
+            var list = recipeCommodityModel.GetRecipeCommodity(recipe);
 
-            List<CommodityShadow> list_1 = new List<CommodityShadow>();
-            foreach (RecipeCommodity recipeCommodity in list)
+            var list_1 = new List<CommodityShadow>();
+            foreach (var recipeCommodity in list)
             {
                 Units unit;
                 try
@@ -128,13 +123,13 @@ namespace RecipeManager.Viewmodel
 
         public List<RecipeCategory> GetRecipeCategories()
         {
-            RecipeCategoryModel recipeCategory = new RecipeCategoryModel(_dbPath);
+            var recipeCategory = new RecipeCategoryModel(_dbPath);
             return recipeCategory.GetRecipeCategories();
         }
 
         public List<Commodity> GetCommodities()
         {
-            CommodityModel commodity = new CommodityModel(_dbPath);
+            var commodity = new CommodityModel(_dbPath);
             return commodity.GetCommodities();
         }
     }

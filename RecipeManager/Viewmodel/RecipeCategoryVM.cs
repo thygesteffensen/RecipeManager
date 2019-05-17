@@ -3,7 +3,7 @@ using RecipeManager.Models;
 
 namespace RecipeManager.Viewmodel
 {
-    class RecipeCategoryVM
+    internal class RecipeCategoryVM
     {
         private readonly RecipeCategoryModel _recipeCategoryModel;
 

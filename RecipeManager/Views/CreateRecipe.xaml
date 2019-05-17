@@ -14,45 +14,47 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Column="0" Grid.Row="0">Kategori</Label>
-        <ComboBox x:Name="RecipeCategoryDropdown" Grid.Column="1" Grid.Row="0" Margin="0,5,0,5" SelectedValuePath="Content">
+        <ComboBox x:Name="RecipeCategoryDropdown" Grid.Column="1" Grid.Row="0" Margin="0,5,0,5"
+                  SelectedValuePath="Content">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding Name}"></TextBlock>
+                    <TextBlock Text="{Binding Name}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
         <Label Grid.Column="0" Grid.Row="1">Opskrift navn:</Label>
-        <TextBox x:Name="RecipeName" Grid.Column="1" Grid.Row="1"/>
-        <Label Grid.Row="2" Grid.Column="0"  Margin="0,5,0,5">Råvare:</Label>
+        <TextBox x:Name="RecipeName" Grid.Column="1" Grid.Row="1" />
+        <Label Grid.Row="2" Grid.Column="0" Margin="0,5,0,5">Råvare:</Label>
         <Grid Grid.Row="2" Grid.Column="1" Margin="0,5,0,5">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <TextBox x:Name="TextBoxValue" PreviewTextInput="NumberValidationTextBox" Grid.Row="0" Grid.Column="0" Margin="0,0,2,0" />
+            <TextBox x:Name="TextBoxValue" PreviewTextInput="NumberValidationTextBox" Grid.Row="0" Grid.Column="0"
+                     Margin="0,0,2,0" />
             <ComboBox x:Name="ComboBoxUnit" Grid.Row="0" Grid.Column="1" Margin="2,0,2,0"
-                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type models:Units}}}"/>
+                      ItemsSource="{Binding Source={local:EnumBindingSource {x:Type models:Units}}}" />
             <ComboBox x:Name="CommodityName" Grid.Row="0" Grid.Column="2" Margin="2,0,2,0" IsEditable="True">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding}"></TextBlock>
+                        <TextBlock Text="{Binding}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <Button Content="Tilføj" Grid.Row="0" Grid.Column="3" Margin="2,0,0,0" Click="AddCommodity_Click"/>
+            <Button Content="Tilføj" Grid.Row="0" Grid.Column="3" Margin="2,0,0,0" Click="AddCommodity_Click" />
         </Grid>
         <!-- So the element which is positioned in the grid does not inherit the height specs 
         for this grid place. So if it is not given in the element, here the ListBox, the scrollbar
@@ -62,23 +64,24 @@
                 <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Text="{Binding Value}" Margin="5,0,5,0"></TextBlock>
-						<TextBlock Grid.Column="1" Text="{Binding Unit}" Margin="5,0,5,0"></TextBlock>
-						<TextBlock Grid.Column="2" Text="{Binding Name}" Margin="5,0,5,0"></TextBlock>
-						<Button Grid.Column="3" Click="RemoveCommodity_Click" Margin="5,0,5,0">Fjern</Button>
-						<Button Grid.Column="4" Click="EditCommodity_Click" Margin="5,0,5,0">Ændre</Button>
+                        <TextBlock Grid.Column="0" Text="{Binding Value}" Margin="5,0,5,0" />
+                        <TextBlock Grid.Column="1" Text="{Binding Unit}" Margin="5,0,5,0" />
+                        <TextBlock Grid.Column="2" Text="{Binding Name}" Margin="5,0,5,0" />
+                        <Button Grid.Column="3" Click="RemoveCommodity_Click" Margin="5,0,5,0">Fjern</Button>
+                        <Button Grid.Column="4" Click="EditCommodity_Click" Margin="5,0,5,0">Ændre</Button>
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
         <Label Grid.Row="4">Beskrivelse:</Label>
-        <TextBox x:Name="Description" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap" Height="Auto"/>
+        <TextBox x:Name="Description" Grid.Row="4" Grid.Column="1" AcceptsReturn="True" TextWrapping="Wrap"
+                 Height="Auto" />
         <Button x:Name="SaveRecipeButton" Grid.Row="5" Grid.ColumnSpan="2" Margin="0,5,0,0" Click="SaveRecipe">Gem opskrift</Button>
     </Grid>
 </Window>
