@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
 using RecipeManager.Models;
@@ -50,7 +51,23 @@ namespace RecipeManager.Views
         public void PopulateConfirmFields()
         {
             ConfirmButton.Content = $"Bekræft ({_listIndex+1}/{_shadowList.Count})";
-            var temp = _shadowList[_listIndex];
+            ScrapeVM.CommodityShadowConfirmed temp;
+            try
+            {
+                temp = _shadowList[_listIndex];
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                ShowVerificationStep(false);
+                RecipeCategoryDropdown.IsEnabled = true;
+                GetRecipeButton.IsEnabled = true;
+                URLInput.IsEnabled = true;
+                NotificationTextBlock.Visibility = Visibility.Hidden;
+                MessageBox.Show("Kunne ikke finde en opskrift på den givne side", "Forkert URL", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
             if (temp.ConfirmedCommodity)
             {
                 NameGuess.Text = temp.Commodity.Name;
@@ -101,6 +118,7 @@ namespace RecipeManager.Views
                 // This check is only due to lag of real dev
                 MessageBox.Show("Forkert URL, Vi understøtter kun opskrifter fra Valdemarso.dk", "Fejl",
                     MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
             // Getting the view ready
             RecipeCategoryDropdown.IsEnabled = false;
@@ -108,7 +126,27 @@ namespace RecipeManager.Views
             URLInput.IsEnabled = false;
             NotificationTextBlock.Visibility = Visibility.Visible;
             // Calling the controller
-            await Task.Run(() => _scrapeVm.ScrapeWebsite(url));
+            try
+            {
+                await Task.Run(() => _scrapeVm.ScrapeWebsite(url));
+                return;
+            }
+            catch (UriFormatException exp)
+            {
+                NotificationTextBlock.Visibility = Visibility.Hidden;
+                MessageBox.Show("Kunne ikke finde en opskrift på den givne side", "Forkert URL", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            catch (WebException exp)
+            {
+                NotificationTextBlock.Visibility = Visibility.Hidden;
+                MessageBox.Show("Der er ingen internetforbindelse", "Ingen forbindelse", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+
+            RecipeCategoryDropdown.IsEnabled = true;
+            GetRecipeButton.IsEnabled = true;
+            URLInput.IsEnabled = true;
         }
 
 

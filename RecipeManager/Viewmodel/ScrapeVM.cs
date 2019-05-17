@@ -43,7 +43,15 @@ namespace RecipeManager.Viewmodel
 
         public void ScrapeWebsite(string url)
         {
-            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url);
+            HttpWebRequest request = null;
+            try
+            {
+                request = (HttpWebRequest) WebRequest.Create(url);
+            }
+            catch (Exception exp)
+            {
+                throw;
+            }
 
             using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
             using (Stream stream = response.GetResponseStream())
