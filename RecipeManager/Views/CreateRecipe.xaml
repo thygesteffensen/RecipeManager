@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:RecipeManager.Views"
         xmlns:models="clr-namespace:RecipeManager.Models"
         mc:Ignorable="d"
-        Height="900" Width="650">
+        Height="900" Width="650"
+        Name="RecipeManager" Icon="Icons/window-icon.png">
     <Grid Margin="10" x:Name="CreateRecipeGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RecipeManager.Views"
         mc:Ignorable="d"
-        Title="Opret kategori" Height="450" Width="450">
+        Title="Opret kategori" Height="450" Width="450"
+        Name="RecipeManager" Icon="Icons/window-icon.png">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

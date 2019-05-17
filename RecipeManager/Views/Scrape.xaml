@@ -7,7 +7,8 @@
         xmlns:models="clr-namespace:RecipeManager.Models"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Title="Opret opskrift" Height="200" Width="450">
+        Title="Opret opskrift" Height="200" Width="450"
+        Name="RecipeManager" Icon="Icons/window-icon.png">
     <Grid Margin="10">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />

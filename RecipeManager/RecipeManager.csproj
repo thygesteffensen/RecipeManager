@@ -170,6 +170,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>RecipeManagerDatabase.mdf</DependentUpon>
     </Content>
+    <Resource Include="Views\Icons\window-icon.png" />
     <Resource Include="Views\Icons\add.png" />
   </ItemGroup>
   <ItemGroup />
