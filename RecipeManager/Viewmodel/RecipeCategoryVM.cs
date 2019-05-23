@@ -17,9 +17,9 @@ namespace RecipeManager.Viewmodel
             return _recipeCategoryModel.GetRecipeCategories();
         }
 
-        public void CreateRecipeCategory(string recipeCategoryName)
+        public RecipeCategory CreateRecipeCategory(string recipeCategoryName)
         {
-            _recipeCategoryModel.CreateRecipeCategory(recipeCategoryName);
+            return _recipeCategoryModel.CreateRecipeCategory(recipeCategoryName);
         }
     }
 }

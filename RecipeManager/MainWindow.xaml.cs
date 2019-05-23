@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using RecipeManager.Models;
@@ -11,12 +12,21 @@ namespace RecipeManager
     {
         private readonly MainWindowVM _controlMainWindowVm;
 
+        private ObservableCollection<RecipeCategory> recipeCategories;
+        private ObservableCollection<Recipe> recipes;
+
+
         public MainWindow()
         {
             InitializeComponent();
             _controlMainWindowVm = new MainWindowVM();
 
-            ReloadView();
+            recipeCategories = _controlMainWindowVm.GetCategories();
+            recipes = _controlMainWindowVm.GetRecipes(recipeCategories[0]);
+            CategoryListBox.ItemsSource = recipeCategories;
+            RecipeListBox.ItemsSource = recipes;
+
+            //            ReloadView();
         }
 
         private void CategoryListBox_SelectionChanged(object sender,
@@ -49,9 +59,11 @@ namespace RecipeManager
             {
                 if (_controlMainWindowVm.DeleteRecipe(recipe))
                 {
+                    recipes.Remove(recipe);
+
                     MessageBox.Show($"{recipe.Name} er blevet fjernet!", "Succes", MessageBoxButton.OK,
                         MessageBoxImage.None);
-                    ReloadView();
+                    //                    ReloadView();
                 }
                 else
                 {
@@ -68,7 +80,7 @@ namespace RecipeManager
             {
                 MessageBox.Show($"{recipe.Name} er blevet ændret!", "Succes", MessageBoxButton.OK,
                     MessageBoxImage.None);
-                ReloadView();
+//                ReloadView();
             }
             else
             {
@@ -103,19 +115,19 @@ namespace RecipeManager
         private void OpenCreateRecipe(object sender, RoutedEventArgs e)
         {
             _controlMainWindowVm.OpenCreateRecipeWindow();
-            ReloadView();
+//            ReloadView();
         }
 
         private void OpenScrapeLink(object sender, RoutedEventArgs e)
         {
             _controlMainWindowVm.OpenScrapeLink();
-            ReloadView();
+//            ReloadView();
         }
 
         private void OpenCreateRecipeCategory(object sender, RoutedEventArgs e)
         {
             _controlMainWindowVm.OpenCreateRecipeCategoryWindow();
-            ReloadView();
+//            ReloadView();
         }
 
         private void ReloadView()

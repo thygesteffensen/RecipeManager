@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Transactions;
@@ -11,6 +12,8 @@ namespace RecipeManager.Viewmodel
     internal class MainWindowVM
     {
         private readonly string _dbPath; // A connection which is used by all interactions with the DB.
+        private ObservableCollection<RecipeCategory> recipeCategories;
+        private ObservableCollection<Recipe> recipes;
 
         public MainWindowVM()
         {
@@ -23,12 +26,24 @@ namespace RecipeManager.Viewmodel
             // Combining base dir with path
             _dbPath = path.Replace("|DataDirectory|", basePath);
             // Creating sql connection
+
+
+            var recipeCategoryModel = new RecipeCategoryModel(_dbPath);
+
+            recipeCategories = new ObservableCollection<RecipeCategory>(recipeCategoryModel.GetRecipeCategories());
         }
 
         public void OpenCreateRecipeCategoryWindow()
         {
-            var createRecipeCategory = new CreateRecipeCategory(_dbPath);
+            var createRecipeCategory = new CreateRecipeCategory(_dbPath, AddRecipeCategoryToList);
             createRecipeCategory.ShowDialog();
+        }
+
+        public int AddRecipeCategoryToList(RecipeCategory recipeCategory)
+        {
+            recipeCategories.Add(recipeCategory);
+
+            return 0;
         }
 
         public bool DeleteRecipe(Recipe recipe)
@@ -55,7 +70,7 @@ namespace RecipeManager.Viewmodel
         {
             try
             {
-                var recipeVm = new RecipeVM(_dbPath, $"Ændre {recipe.Name}", recipe);
+                var recipeVm = new RecipeVM(_dbPath, $"Ændre {recipe.Name}", AddRecipe , recipe);
                 return true;
             }
             catch (SqlException)
@@ -70,29 +85,40 @@ namespace RecipeManager.Viewmodel
             return false;
         }
 
-        public List<RecipeCategory> GetCategories()
+        public ObservableCollection<RecipeCategory> GetCategories()
         {
-            var recipeCategoryModel = new RecipeCategoryModel(_dbPath);
+            return recipeCategories;
+//            var recipeCategoryModel = new RecipeCategoryModel(_dbPath);
 
+//            return new ObservableCollection<RecipeCategory>(recipeCategoryModel.GetRecipeCategories());
 
-            return recipeCategoryModel.GetRecipeCategories();
+//            return recipeCategoryModel.GetRecipeCategories();
         }
 
-        public List<Recipe> GetRecipes(RecipeCategory recipeCategory)
+        public ObservableCollection<Recipe> GetRecipes(RecipeCategory recipeCategory)
         {
             var recipeModel = new RecipeModel(_dbPath);
+            recipes = new ObservableCollection<Recipe>(recipeModel.GetRecipes(recipeCategory));
+            return recipes;
+            //            var recipeModel = new RecipeModel(_dbPath);
 
-            return recipeModel.GetRecipes(recipeCategory);
+            //            return recipeModel.GetRecipes(recipeCategory);
         }
 
         public void OpenScrapeLink()
         {
-            var scrapeVm = new ScrapeVM(_dbPath);
+            var scrapeVm = new ScrapeVM(_dbPath, AddRecipe);
         }
 
         public void OpenCreateRecipeWindow()
         {
-            var recipeVm = new RecipeVM(_dbPath, "Opret opskrift");
+            var recipeVm = new RecipeVM(_dbPath, "Opret opskrift", AddRecipe);
+        }
+
+        public int AddRecipe(Recipe recipe)
+        {
+            recipes.Add(recipe);
+            return 0;
         }
 
         public void DeleteAllContent()

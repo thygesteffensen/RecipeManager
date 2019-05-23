@@ -20,14 +20,18 @@ namespace RecipeManager.Viewmodel
         private readonly RecipeModel _recipeModel;
         private readonly Scrape _scrape;
 
+        private Func<Recipe, int> callback;
+
         private string _recipeName;
 
-        public ScrapeVM(string dbPath)
+        public ScrapeVM(string dbPath, Func<Recipe, int> callback)
         {
             _commodityModel = new CommodityModel(dbPath);
             _recipeModel = new RecipeModel(dbPath);
             _rcModel = new RCModel(dbPath);
             _recipeCommodityModel = new RecipeCommodityModel(dbPath);
+
+            this.callback = callback;
 
             var recipeCategoryVm = new RecipeCategoryVM(dbPath);
 
@@ -134,7 +138,6 @@ namespace RecipeManager.Viewmodel
 
             var recipe = _recipeModel.CreateRecipe(_recipeName, description);
 
-
             // Now we need to bind them together! We do need these objects :D
             _rcModel.CreateRC(recipe, recipeCategory);
 
@@ -152,6 +155,7 @@ namespace RecipeManager.Viewmodel
             }
 
             MessageBox.Show("Opskriften er blevet gemt", "Succes", MessageBoxButton.OK, MessageBoxImage.Information);
+            callback(recipe);
             _scrape.Close();
         }
 

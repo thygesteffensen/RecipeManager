@@ -10,14 +10,16 @@ namespace RecipeManager.Viewmodel
     {
         private readonly CreateRecipe _createRecipe;
         private readonly string _dbPath;
+        private Func<Recipe, int> callback;
 
 
-        public RecipeVM(string dbPath, string title, Recipe recipe = null)
+        public RecipeVM(string dbPath, string title, Func<Recipe, int> callback, Recipe recipe = null)
         {
             _dbPath = dbPath;
             _createRecipe = new CreateRecipe(this, recipe);
             _createRecipe.Title = title;
             _createRecipe.ShowDialog();
+            this.callback = callback;
         }
 
         public RecipeToCategory GetRecipeCategory(Recipe recipe)
@@ -72,7 +74,12 @@ namespace RecipeManager.Viewmodel
             var recipeModel = new RecipeModel(_dbPath);
             var commodityModel = new CommodityModel(_dbPath);
 
-            if (recipe == null) recipe = recipeModel.CreateRecipe(recipeName, recipeDescription);
+            if (recipe == null)
+            {
+                recipe = recipeModel.CreateRecipe(recipeName, recipeDescription);
+                callback(recipe);
+            }
+            
 
             rcModel.CreateRC(recipe, recipeCategory);
 
